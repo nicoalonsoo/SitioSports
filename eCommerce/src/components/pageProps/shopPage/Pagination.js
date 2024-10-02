@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../home/Products/Product";
 import { useSelector } from "react-redux";
-import { spinner } from "../../../assets/images";
 
 function Items({
+  itemOffset,
   currentItems,
   selectedBrands,
   selectedCategories,
@@ -13,9 +13,11 @@ function Items({
   sort,
   searchTag,
   handleEmpty,
+  itemsPerPage,
+  handleShowButton
 }) {
   const [searchedProducts, setSearchedProducts] = useState([]);
-  
+
   useEffect(() => {
     if (searchTag) {
       const filtered = currentItems.filter((product) =>
@@ -54,7 +56,9 @@ function Items({
 
     const isTagSelected =
       selectedTags.length === 0 ||
-      selectedTags.some((selectedTag) => item.tags?.includes(selectedTag.title));
+      selectedTags.some((selectedTag) =>
+        item.tags?.includes(selectedTag.title)
+      );
 
     return (
       isBrandSelected &&
@@ -91,9 +95,18 @@ function Items({
     }
   }, [sortedItems, handleEmpty]);
 
+  useEffect(() => {
+   handleShowButton(sortedItems.length)
+  }, [itemsPerPage, sortedItems]);
+
+  const endOffset = itemOffset + itemsPerPage;
+  const totalItems = sortedItems.slice(itemOffset, endOffset);
+
+  
+
   return (
     <>
-      {sortedItems.length === 0 ? (
+      {totalItems.length === 0 ? (
         <div className="w-full">
           <h1 className="text-center text-gray-800 font-semibold text-lg lg:text-xl px-0">
             Tus parámetros de búsqueda no concuerdan con ninguno de nuestros
@@ -101,7 +114,7 @@ function Items({
           </h1>
         </div>
       ) : (
-        sortedItems.map((item) => (
+        totalItems.map((item) => (
           <div key={item._id} className="w-full">
             <Product
               _id={item.id}
@@ -128,7 +141,12 @@ function Items({
   );
 }
 
-const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSearchTag }) => {
+const Pagination = ({
+  commissions,
+  sort,
+  searchTag,
+  handleChangeSearchTag,
+}) => {
   const items = useSelector((state) => {
     if (commissions) {
       // Si es así, devolvemos los productos por encargo
@@ -138,14 +156,14 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
       return state.orebiReducer.products;
     }
   }); // Filter items based on selected brands and categories
-
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemStart, setItemStart] = useState(1);
   const [empty, setEmpty] = useState(false);
   const [localSearchTag, setLocalSearchTag] = useState("");
 
   const endOffset = itemOffset + itemsPerPage;
-  const currentItems = items.slice(itemOffset, endOffset);
+  const currentItems = items;
   const selectedBrands = useSelector(
     (state) => state.orebiReducer.checkedBrands
   );
@@ -160,10 +178,10 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
 
   const handleSearchTag = () => {
     handleChangeSearchTag();
-  }
+  };
   useEffect(() => {
     if (searchTag) {
-      setLocalSearchTag(searchTag)
+      setLocalSearchTag(searchTag);
     }
   }, [searchTag]);
 
@@ -172,7 +190,7 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
       handleEmpty(false);
     }
     if (searchTag) {
-      setLocalSearchTag("")
+      setLocalSearchTag("");
       handleSearchTag();
     }
   }, [
@@ -180,7 +198,7 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
     selectedCategories,
     selectedSubcategories,
     selectedSizes,
-    selectedTags
+    selectedTags,
   ]);
 
   const pageCount = Math.ceil(items.length / itemsPerPage);
@@ -194,19 +212,33 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
   const handleEmpty = (value) => {
     setEmpty(value);
   };
+  const loadMoreItems = () => {
+    setItemsPerPage((prevItemsPerPage) => prevItemsPerPage + 4); // Añadir 4 más cada vez
+    handleShowButton();
+  };
+  const [showButton, setShowButton] = useState(false);
+  const handleShowButton = (value) => {
 
+    
+    if (value < itemsPerPage) {
+      setShowButton(false);
+    } else {
+      setShowButton(true);
+    }
+  };
   return (
     <div>
       {empty ? (
         <div className="w-full">
           <h1 className="text-center text-gray-800 font-semibold text-xl px-4 lg:px-20">
-            Tus parámetros de busqueda no concuerdan con <br/>ninguno de nuestros
-            productos, sigue buscando!
+            Tus parámetros de busqueda no concuerdan con <br />
+            ninguno de nuestros productos, sigue buscando!
           </h1>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 mdl:gap-4 lg:gap-10">
           <Items
+            itemOffset={itemOffset}
             currentItems={currentItems}
             selectedBrands={selectedBrands}
             selectedCategories={selectedCategories}
@@ -216,7 +248,20 @@ const Pagination = ({ itemsPerPage, commissions, sort, searchTag, handleChangeSe
             sort={sort}
             searchTag={localSearchTag}
             handleEmpty={handleEmpty}
+            itemsPerPage={itemsPerPage}
+            handleShowButton={handleShowButton}
           />
+        </div>
+      )}
+      {/* Botón "Cargar más" */}
+      {showButton && (
+        <div className="flex justify-center mt-10">
+          <button
+            className="px-4 py-2 bg-pink-500 text-white rounded-md"
+            onClick={loadMoreItems}
+          >
+            Cargar más
+          </button>
         </div>
       )}
     </div>

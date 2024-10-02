@@ -48,7 +48,6 @@ const ProductDetails = () => {
   const [images, setImages] = useState("");
 
   const product = useSelector((state) => state.orebiReducer.idProduct);
-console.log(product);
 
   useEffect(() => {
     if (product && !isLoading) {

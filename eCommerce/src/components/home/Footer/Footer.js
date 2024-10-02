@@ -46,11 +46,11 @@ const Footer = () => {
           <FooterListTitle title=" Medios de pago" />
           <div className="flex flex-col gap-6">
             <div className="flex flex-wrap py-3 gap-2">
-              {tarjetas?.map((tarjeta) => (
-                <img className="w-14" src={tarjeta} />
+              {tarjetas?.map((tarjeta, index) => (
+                <img className="w-14" key={`metodo de pago ${index}`} src={tarjeta} />
               ))}
-              {otherPaymentMethods?.map((payment) => (
-                <img src={payment} className="w-14" />
+              {otherPaymentMethods?.map((payment, index) => (
+                <img src={payment} key={`otro metodo de pago ${index}`} className="w-14" />
               ))}
             </div>
           </div>

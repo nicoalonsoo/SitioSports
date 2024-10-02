@@ -6,7 +6,7 @@ import ProductBanner from "../../components/pageProps/shopPage/ProductBanner";
 import ShopSideNav from "../../components/pageProps/shopPage/ShopSideNav";
 
 const Shop = () => {
-  const [itemsPerPage, setItemsPerPage] = useState(48);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [sort, setSort] = useState("");
 
   const location = useLocation();
@@ -55,7 +55,6 @@ const Shop = () => {
           />
         </div>
       </div>
-      {/* ================= Products End here ===================== */}
     </div>
   );
 };

@@ -192,7 +192,6 @@ const Payment = () => {
       payerInfo: addressForm,
     });
     setAddressReady(true);
-console.log(addressForm);
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
@@ -572,6 +571,7 @@ console.log(addressForm);
                       <img
                         className="h-8 w-auto"
                         src="https://www.mercadopago.com/v1/platforms/tienda-nube/assets/logos/logo-mp-400x120.png"
+                        alt="mercadopago"
                       />
                     </div>
                   </div>
@@ -580,7 +580,9 @@ console.log(addressForm);
                 {paymentMethod === "mp" ? (
                   <div className="flex flex-wrap py-3 gap-2">
                     {tarjetas?.map((tarjeta) => (
-                      <img className="w-14" src={tarjeta} />
+                      <img className="w-14" 
+                      alt="card-icon"
+                      src={tarjeta} />
                     ))}
                     {otherPaymentMethods?.map((payment) => (
                       <img src={payment} className="w-14" />
@@ -627,7 +629,9 @@ console.log(addressForm);
             {products?.map((product) => (
               <div className="flex justify-between gap-6">
                 <div className="w-24 ">
-                  <img className="w-full" src={product.image} />
+                  <img className="w-full" 
+                  alt={product.name}
+                  src={product.image} />
                 </div>
                 <div className="w-full text-gray-800">
                   <p>

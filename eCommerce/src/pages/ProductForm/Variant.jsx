@@ -58,7 +58,7 @@ const Variant = ({
         {vari.imgUrl
           ? vari.imgUrl?.map((img, index) => (
               <div key={index} className="w-24 relative">
-                <img className="" src={img} />
+                <img className="" src={img} alt="var-image" />
                 <div
                   onClick={() => handleDeleteImage(index, vari.id)}
                   className="absolute top-0 right-0 cursor-pointer opacity-70 hover:opacity-100"

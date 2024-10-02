@@ -26,7 +26,6 @@ const Home = () => {
     fetchData();
   }, [dispatch]);
 
-  console.log(products);
   return (
     <div className="w-full mx-auto overflow-hidden">
       <Banner />

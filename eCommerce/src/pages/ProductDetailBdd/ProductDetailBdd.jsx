@@ -81,7 +81,6 @@ const ProductDetailBdd = () => {
   };
 
   const handleChanging = () => {
-    console.log("Activating change mode");
     setIsChanging(true);
   };
 

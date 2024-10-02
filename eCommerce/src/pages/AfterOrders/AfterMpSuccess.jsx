@@ -28,8 +28,6 @@ const AfterMp = () => {
       // Filtrar la orden por `order_number` usando el param de la URL
       const foundOrder = orders.find((order) => order.order_number === parseInt(orden, 10));
       if (foundOrder) {
-        console.log(foundOrder);
-        
         setOrder(foundOrder);
         
         // Enviar evento a GTM solo si la orden fue encontrada

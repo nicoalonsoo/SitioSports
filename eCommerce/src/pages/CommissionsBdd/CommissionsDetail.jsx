@@ -69,8 +69,6 @@ const CommissionsDetailBdd = () => {
 
   const handleUpdateVariant = (variant) => {
     const index = product.variants.findIndex((v) => v.id === variant.id);
-    console.log("entro a la funcion");
-    console.log(variant);
     if (index !== -1) {
       const updatedVariants = [...product.variants];
       updatedVariants[index] = variant;

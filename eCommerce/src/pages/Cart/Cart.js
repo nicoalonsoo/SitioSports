@@ -35,7 +35,6 @@ const Cart = () => {
   useEffect(() => {
     setShippingCharge(0);
   }, [totalAmt]);
-console.log(products);
 
   useEffect(() => {
     products.forEach(cartItem => {
