@@ -10,7 +10,7 @@ const Brand = () => {
     (state) => state.orebiReducer.checkedBrands
   );
   const dispatch = useDispatch();
-
+ 
   const brands = [
     {
       _id: 900,

@@ -42,6 +42,14 @@ const UploadImage = ({ handleUploadImage, id, handleUploadImageVariant, handleCl
   
 
     if (files.length === 1) {
+      const file = files[0];
+      const fileSizeInKB = file.size / 1024;
+
+      // Validar si el archivo es mayor a 1MB (1024 KB)
+      if (fileSizeInKB > 100) {
+        alert("La imagen es demasiado pesada, por favor elige una que pese menos de 100 kb.");
+        return;
+      }
       const base64 = await convertBase64(files[0]);
       uploadSingleImage(base64);
       return;
