@@ -4,6 +4,7 @@ import { fetchProductsFromBackend } from "../../utils/api";
 import { setBackendProducts } from "../../redux/orebiSlice";
 import { logoTransparent, up, down } from "../../assets/images";
 import ProductFilter from "../../components/ProductFilter/ProductFilter";
+import thumbnailConvert from "../../utils/convertThumbnail";
 
 const ProductTable = () => {
   const dispatch = useDispatch();
@@ -131,7 +132,7 @@ const ProductTable = () => {
                           src={
                             product.variants.length > 0 &&
                             product.variants[0].imgUrl.length > 0
-                              ? product.variants[0].imgUrl[0]
+                              ? thumbnailConvert(product.variants[0].imgUrl[0])
                               : ""
                           }
                           alt=""
