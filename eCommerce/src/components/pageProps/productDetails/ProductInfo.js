@@ -7,6 +7,7 @@ import { FaLock } from "react-icons/fa";
 import SizeGuide from "./SizeGuide";
 import { motion, AnimatePresence } from "framer-motion";
 import formatPrice from "../../../utils/formatPrice";
+import thumbnailConvert from "../../../utils/convertThumbnail";
 
 const ProductInfo = ({
   productInfo,
@@ -265,7 +266,7 @@ const ProductInfo = ({
                 }`}
                 onClick={() => handleVariantChange(variant)}
               >
-                <img className="w-20" src={variant.imgUrl[0]} />
+                <img className="w-20" src={thumbnailConvert(variant.imgUrl[0])} />
               </div>
             ))}
           </div>

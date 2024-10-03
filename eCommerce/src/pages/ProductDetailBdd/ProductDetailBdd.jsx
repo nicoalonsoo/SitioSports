@@ -6,7 +6,7 @@ import axios from "axios";
 import { botinesSizes, camisetasSizes, mediasSizes } from "../../constants";
 import StockBysizes from "../../components/ProductsTable/StockBySizes";
 import formatPrice from "../../utils/formatPrice";
-
+import thumbnailConvert from "../../utils/convertThumbnail";
 const ProductDetailBdd = () => {
   const [isChanging, setIsChanging] = useState(false);
   const { id } = useParams();
@@ -189,7 +189,7 @@ const ProductDetailBdd = () => {
       <div className="px-32 py-10">
         <div className="w-full flex justify-between">
           <a href="/producttable">
-            <img className="w-20" src={logoTransparent} alt="" />
+            <img className="w-20" src={thumbnailConvert(logoTransparent)} alt="" />
           </a>
           <div>
             {isChanging ? (

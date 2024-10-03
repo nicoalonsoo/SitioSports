@@ -6,6 +6,7 @@ import PostSizeMedias from "../../components/ProductForm/PostSizeMedias";
 import PostAccesorios from "../../components/ProductForm/PostAccesorios";
 import PostSizeZapatillas from "../../components/ProductForm/PostSizeZapatillas";
 import { IoIosArrowDown } from "react-icons/io";
+import thumbnailConvert from "../../utils/convertThumbnail";
 
 const Variant = ({
   handleChangeVariantImg,
@@ -58,7 +59,7 @@ const Variant = ({
         {vari.imgUrl
           ? vari.imgUrl?.map((img, index) => (
               <div key={index} className="w-24 relative">
-                <img className="" src={img} alt="var-image" />
+                <img className="" src={thumbnailConvert(img)} alt="var-image" />
                 <div
                   onClick={() => handleDeleteImage(index, vari.id)}
                   className="absolute top-0 right-0 cursor-pointer opacity-70 hover:opacity-100"
