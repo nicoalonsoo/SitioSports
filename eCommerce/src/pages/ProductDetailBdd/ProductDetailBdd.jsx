@@ -145,6 +145,8 @@ const ProductDetailBdd = () => {
         ? botinesSizes
         : product.cat === "Camisetas"
         ? camisetasSizes
+        : product.cat === "Indumentaria"
+        ? camisetasSizes
         : product.cat === "Medias"
         ? mediasSizes
         : product.cat === "Zapatillas"
