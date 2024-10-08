@@ -250,6 +250,26 @@ export const mediasSizes = [
   { size: "41-42", stock: 0, sold: 0 },
   { size: "43-44", stock: 0, sold: 0 },
 ];
+export const zapatillasMujerSizes = [
+  { size: "34", stock: 0, sold: 0 },
+  { size: "35", stock: 0, sold: 0 },
+  { size: "36", stock: 0, sold: 0 },
+  { size: "37", stock: 0, sold: 0 },
+  { size: "38", stock: 0, sold: 0 },
+];
+
+export const mochilaSizes = [{ size: "Mochila", stock: 0, sold: 0 }];
+
+export const guantesSizes = [
+  { size: "8", stock: 0, sold: 0 },
+  { size: "9", stock: 0, sold: 0 },
+  { size: "10", stock: 0, sold: 0 },
+];
+
+export const canillerasSizes = [{ size: "Canilleras", stock: 0, sold: 0 }];
+
+export const termoSizes = [{ size: "Termo", stock: 0, sold: 0 }];
+
 // =================== NavBarList End here ======================
 // =================== Special Offer data Start here ============
 export const tarjetas = [

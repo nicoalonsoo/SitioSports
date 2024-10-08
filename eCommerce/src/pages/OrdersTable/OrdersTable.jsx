@@ -166,7 +166,7 @@ const OrdersTable = () => {
                     {order.order_type}
                   </td>
                   <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
-                    <span className={`flex justify-center text-center px-3 py-1 font-semibold ${order.status === 'approved' || order.status === 'Aprobado' ? 'bg-green-200' : order.status === 'Enviado' ? "bg-yellow-200": order.status === 'Pago Pendiente' ? "bg-blue-200" : 'bg-red-200'}`}>
+                    <span className={`flex justify-center text-center px-3 py-1 font-semibold ${order.status === 'approved' || order.status === 'Aprobado' ? 'bg-green-200' : order.status === 'Enviado'  ? "bg-yellow-200" : order.status === 'Entregado' ? "bg-yellow-200" : order.status === 'Pago Pendiente' ? "bg-blue-200" : 'bg-red-200'}`}>
                       {order.status === "rejected" ? "Tarjeta Rechazada" : order.status}
                     </span>
                   </td>

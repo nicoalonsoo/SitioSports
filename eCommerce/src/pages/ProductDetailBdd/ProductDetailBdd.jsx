@@ -3,7 +3,16 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { logoTransparent } from "../../assets/images";
 import axios from "axios";
-import { botinesSizes, camisetasSizes, mediasSizes } from "../../constants";
+import {
+  botinesSizes,
+  camisetasSizes,
+  mediasSizes,
+  zapatillasMujerSizes,
+  mochilaSizes,
+  guantesSizes,
+  canillerasSizes,
+  termoSizes,
+} from "../../constants";
 import StockBysizes from "../../components/ProductsTable/StockBySizes";
 import formatPrice from "../../utils/formatPrice";
 import thumbnailConvert from "../../utils/convertThumbnail";
@@ -34,7 +43,7 @@ const ProductDetailBdd = () => {
     const handleBeforeUnload = (event) => {
       if (isChanging) {
         event.preventDefault();
-        event.returnValue = '';
+        event.returnValue = "";
       }
     };
 
@@ -63,11 +72,14 @@ const ProductDetailBdd = () => {
       description: product.description,
       video_youtube: product.video_youtube,
       disabled: product.disabled,
-      tags: product.tags
+      tags: product.tags,
     };
 
     axios
-      .put(`https://sitiosports-production.up.railway.app/products/${product.id}`, productChanges)
+      .put(
+        `https://sitiosports-production.up.railway.app/products/${product.id}`,
+        productChanges
+      )
       .then((response) => {
         // Maneja la respuesta de la solicitud, por ejemplo, muestra una notificación de éxito
         alert("Cambios guardados con éxito");
@@ -133,12 +145,21 @@ const ProductDetailBdd = () => {
         ? botinesSizes
         : product.cat === "Camisetas"
         ? camisetasSizes
-        : mediasSizes;
+        : product.cat === "Medias"
+        ? mediasSizes
+        : product.cat === "Zapatillas"
+        ? product.tags.includes("Hombre")
+          ? botinesSizes
+         : product.tags.includes("Mujer")
+          ? zapatillasMujerSizes
+          : botinesSizes // Puedes manejar el caso donde no sea ni "Mujer" ni "Hombre"
+        : botinesSizes;
     const newVariant = { variant: "new", id: newId, sizes: sizes, imgUrl: [] };
 
     setProduct({ ...product, variants: [...product.variants, newVariant] });
     setIsChanging(true);
   };
+  console.log(product);
 
   const handleReturn = () => {
     setProduct(prevProduct);
@@ -189,7 +210,11 @@ const ProductDetailBdd = () => {
       <div className="px-32 py-10">
         <div className="w-full flex justify-between">
           <a href="/producttable">
-            <img className="w-20" src={thumbnailConvert(logoTransparent)} alt="" />
+            <img
+              className="w-20"
+              src={thumbnailConvert(logoTransparent)}
+              alt=""
+            />
           </a>
           <div>
             {isChanging ? (
@@ -278,7 +303,9 @@ const ProductDetailBdd = () => {
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-lg sm:leading-6"
                   />
                 ) : (
-                  <p className="text-sm">${formatPrice(product.compare_price)}</p>
+                  <p className="text-sm">
+                    ${formatPrice(product.compare_price)}
+                  </p>
                 )}
               </div>
 
