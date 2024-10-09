@@ -33,16 +33,16 @@ const CarruselDetail = ({ productInfo, variantImages }) => {
       {productInfo ? (
         <div className="flex flex-col gap-6 lg:w-[50%]">
           <img
-            src={compressImage(activeImg)}
+            src={(activeImg)}
             alt={activeImg}
             className="hidden lg:block w-full h-full object-cover rounded-xl"
           />
           <div className="h-24 hidden lg:flex justify-center">
             <div className="flex flex-row justify-center space-x-6  overflow-hidden">
-              {images?.map((image, index) => (
+              {images?.map((image) => (
                 <img
-                  src={thumbnailConvert(image)}
-                  alt={`thumbnail ${index}`}
+                  src={(image)}
+                  alt=""
                   className={`w-32 h-auto rounded-md cursor-pointer ${
                     activeImg === image
                       ? "border-2 border-gray-500 shadow-md"
@@ -61,7 +61,7 @@ const CarruselDetail = ({ productInfo, variantImages }) => {
                     key={index}
                     className="w-auto flex flex-wrap justify-center items-start gap-4 rounded-xl overflow-hidden"
                   >
-                    <img src={image} alt="img_before" />
+                    <img src={(image)} alt="img_before" />
                   </div>
                 </div>
               ))}
