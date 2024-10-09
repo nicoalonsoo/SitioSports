@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import thumbnailConvert from "../../../utils/convertThumbnail";
+import compressImage from "../../../utils/compressImage";
 const CarruselDetail = ({ productInfo, variantImages }) => {
   const [images, setImages] = useState([
     { imgSrc: "" },
@@ -31,16 +33,16 @@ const CarruselDetail = ({ productInfo, variantImages }) => {
       {productInfo ? (
         <div className="flex flex-col gap-6 lg:w-[50%]">
           <img
-            src={activeImg}
-            alt=""
+            src={compressImage(activeImg)}
+            alt={activeImg}
             className="hidden lg:block w-full h-full object-cover rounded-xl"
           />
           <div className="h-24 hidden lg:flex justify-center">
             <div className="flex flex-row justify-center space-x-6  overflow-hidden">
-              {images?.map((image) => (
+              {images?.map((image, index) => (
                 <img
-                  src={image}
-                  alt=""
+                  src={thumbnailConvert(image)}
+                  alt={`thumbnail ${index}`}
                   className={`w-32 h-auto rounded-md cursor-pointer ${
                     activeImg === image
                       ? "border-2 border-gray-500 shadow-md"
