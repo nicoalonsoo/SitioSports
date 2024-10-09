@@ -4,7 +4,6 @@ import Image from "../../designLayouts/Image";
 import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
 import formatPrice from "../../../utils/formatPrice";
-
 const Product = (props) => {
   const rootId = props.slug;
   const [variantNumber, setVariantNumber] = useState("")
