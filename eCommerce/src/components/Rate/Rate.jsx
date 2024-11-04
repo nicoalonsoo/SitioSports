@@ -54,12 +54,30 @@ const Rate = ({ dimensions, detailPrice }) => {
       setTotalAmount(Number(detailPrice));
     }
   }, [cartProducts, detailPrice]);
-  
+
+  const getToken = async () => {
+    const storedToken = JSON.parse(localStorage.getItem("correoToken"));
+    const now = new Date();
+
+    if (storedToken && new Date(storedToken.expire) > now) {
+      return storedToken.token;
+    } else {
+      const newToken = await handleAuthToken();
+      const newExpireDate = new Date();
+      newExpireDate.setSeconds(newExpireDate.getSeconds() + 3600); // Ajusta el tiempo según el `expire` que recibes
+      localStorage.setItem(
+        "correoToken",
+        JSON.stringify({ token: newToken, expire: newExpireDate.toISOString() })
+      );
+      return newToken;
+    }
+  };
+
   const handleCalculateRate = async (postalCode = cp) => {
     try {
       setIsLoading(true);
       localStorage.setItem("postalCode", postalCode);
-      const token = await handleAuthToken();
+      const token = await getToken();
 
       const responses = await Promise.all([
         axios.post(
