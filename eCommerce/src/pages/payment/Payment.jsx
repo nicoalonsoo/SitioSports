@@ -9,7 +9,7 @@ import formatPrice from "../../utils/formatPrice";
 import AddressForm from "../../components/PayerForm/AddressForm";
 import ContactForm from "../../components/PayerForm/ContactForm";
 import { tarjetas, otherPaymentMethods } from "../../constants/index";
-
+import ShippingOptions from "../../components/ShippingOptions/ShippingOptions";
 const Payment = () => {
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ const Payment = () => {
   const [couponCode, setCouponCode] = useState("");
   const [couponValid, setCouponValid] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
-  const [couponSent, setCouponSent] = useState(false)
+  const [couponSent, setCouponSent] = useState(false);
 
   useEffect(() => {
     setProductInfo(location.state.item);
@@ -48,13 +48,13 @@ const Payment = () => {
     setShippmentCharge(location.state.shippingCharge);
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
-      event: "InitiateCheckout", 
-      eventCategory: "InitiateCheckout", 
-      content_ids: [productInfo.id],  // ID del producto
-      content_name: productInfo.productName,  // Nombre del producto
-      content_type: "product",  // Tipo de contenido
-      value: productInfo.price,  // Precio del producto
-      currency: "ARS",  // Moneda
+      event: "InitiateCheckout",
+      eventCategory: "InitiateCheckout",
+      content_ids: [productInfo.id], // ID del producto
+      content_name: productInfo.productName, // Nombre del producto
+      content_type: "product", // Tipo de contenido
+      value: productInfo.price, // Precio del producto
+      currency: "ARS", // Moneda
     });
   }, [location]);
 
@@ -71,7 +71,7 @@ const Payment = () => {
 
   useEffect(() => {
     let finalAmount;
-    
+
     // Cálculo inicial según el método de pago
     if (paymentMethod === "tb") {
       // Si es transferencia bancaria (tb), aplicar el 15% de descuento
@@ -90,17 +90,15 @@ const Payment = () => {
         finalAmount = totalAmt + shippmentCharge;
       }
     }
-  
+
     // Aplicar el cupón si es válido
     if (couponValid && couponDiscount > 0) {
       finalAmount = finalAmount - (finalAmount * couponDiscount) / 100;
     }
-  
+
     // Actualizamos el total final con descuento por transferencia o cupón
     setShipmentPlusTotal(finalAmount);
   }, [totalAmt, shippmentCharge, paymentMethod, couponDiscount, couponValid]);
-  
-  
 
   useEffect(() => {
     let finalAmount;
@@ -110,13 +108,11 @@ const Payment = () => {
       finalAmount = totalAmt;
     }
     setShipmentPlusTotal(finalAmount);
-    setOrder((prevOrder) => ({
-      ...prevOrder,
-      shipment: shippmentCharge,
-    }));
+    // setOrder((prevOrder) => ({
+    //   ...prevOrder,
+    //   shipment: shippmentCharge,
+    // }));
   }, [totalAmt, shippmentCharge]);
-
-
 
   const handlePay = async () => {
     if (paymentMethod === "mp") {
@@ -152,12 +148,13 @@ const Payment = () => {
             street_number: order.payerInfo.streetNumber,
             floor: order.payerInfo.floor,
             aclaration: order.payerInfo.aclaration,
+            rate: shipping,
           },
           order_type: "Transferencia Bancaria",
           status: "Pago Pendiente",
           status_detail: "Cliente debe realizar la transferencia",
           transaction_amount: shipmentPlusTotal,
-          shipping_amount: 0,
+          shipping_amount: shippmentCharge,
           transaction_details: {
             net_received_amount: shipmentPlusTotal,
             total_paid_amount: totalAmt,
@@ -195,25 +192,32 @@ const Payment = () => {
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
-      event: "AddPaymentInfo", 
-      eventCategory: "AddPaymentInfo", 
-      content_ids: [order.productInfo.id],  // ID del producto
-      content_name: order.productInfo.productName,  // Nombre del producto
-      content_type: "product",  // Tipo de contenido
-      value: order.productInfo.price,  // Precio del producto
-      currency: "ARS",  // Moneda
-      customer_id: addressForm.client_id || null,  // ID del cliente si está registrado
-      email: addressForm.email,  // Correo del usuario
-      full_name: addressForm.payerName,  // Nombre completo del usuario
-      phone_number: addressForm.phone,  // Número de teléfono
+      event: "AddPaymentInfo",
+      eventCategory: "AddPaymentInfo",
+      content_ids: [order.productInfo.id], // ID del producto
+      content_name: order.productInfo.productName, // Nombre del producto
+      content_type: "product", // Tipo de contenido
+      value: order.productInfo.price, // Precio del producto
+      currency: "ARS", // Moneda
+      customer_id: addressForm.client_id || null, // ID del cliente si está registrado
+      email: addressForm.email, // Correo del usuario
+      full_name: addressForm.payerName, // Nombre completo del usuario
+      phone_number: addressForm.phone, // Número de teléfono
     });
   };
 
   const handleEditMail = () => {
     setAddressReady(false);
+    setShippmentCharge(null);
+    setShipping(null);
+    setOrder((prevOrder) => ({
+      ...prevOrder,
+      shipment: null,
+    }));
+    setReadyToPay(false);
   };
 
-  const handleClickShippingType = (value) => {
+  const handleClickShippingType = (value, rate, agency) => {
     setShipping(value);
     if (value === "Domicilio" && shipping !== "Domicilio") {
       setShippmentCharge(shippmentCharge + 2350);
@@ -221,15 +225,19 @@ const Payment = () => {
       setShippmentCharge(shippmentCharge);
     } else if (value === "estandar") {
       setShippmentCharge(0);
+    } else {
+      setShippmentCharge(value);
+      setShipping(rate);
+      setOrder((prevOrder) => ({
+        ...prevOrder,
+        shipment: rate,
+      }));
     }
     setPaymentMethod("");
   };
 
-
-
   // Función para validar y aplicar el cupón
   const handleApplyCoupon = async () => {
-    
     try {
       const usageRecord = {
         //userId: 1234,  // Aquí puedes agregar el ID del usuario que aplica el cupón
@@ -259,6 +267,7 @@ const Payment = () => {
       setCouponSent(true);
     }
   };
+  console.log(order.shipment, shippmentCharge, shipping);
 
   return (
     <div className="flex flex-wrap w-screen h-full justify-start items-start px-2 lg:px-32 xl:px-44 pb-20 relative">
@@ -281,7 +290,6 @@ const Payment = () => {
             ${shipmentPlusTotal}
           </span>
         </button>
-
         <motion.div
           initial={{ height: 0, opacity: 0 }}
           animate={{
@@ -323,14 +331,18 @@ const Payment = () => {
                   ${formatPrice(totalAmt)}
                 </span>
               </p>
-              <p className="flex items-center justify-between py-1.5 text-lg font-medium">
-                Costo de envío
-                <span className="font-semibold tracking-wide font-titleFont">
-                  {shipping === "estandar"
-                    ? "Gratis"
-                    : `$${formatPrice(shippmentCharge)}`}
-                </span>
-              </p>
+              {shippmentCharge !== null ? (
+                <p className="flex items-center justify-between py-1.5 text-lg font-medium">
+                  Costo de envío
+                  <span className="font-semibold tracking-wide font-titleFont">
+                    {shipping === "estandar"
+                      ? "Gratis"
+                      : `$${formatPrice(shippmentCharge)}`}
+                  </span>
+                </p>
+              ) : (
+                ""
+              )}
               {paymentMethod === "tb" && transferDiscount !== 0 ? (
                 <p className="flex items-center justify-between border-b-0 py-1.5 text-lg font-medium">
                   Descuento
@@ -429,9 +441,9 @@ const Payment = () => {
             )}
             {addressReady ? (
               <div className="py-4 text-gray-600">
-                <h1 className="text-gray-800 font-bold uppercase">
+                {/* <h1 className="text-gray-800 font-bold uppercase">
                   Dirección de envío
-                </h1>
+                </h1> */}
                 <p>{order.payerInfo.payerName}</p>
                 <p>{order.payerInfo.phone}</p>
                 <p>{order.payerInfo.zipCode}, AR</p>
@@ -457,9 +469,18 @@ const Payment = () => {
 
         <div className="w-full space-y-4">
           <p className="font-bold text-2xl uppercase">Opciones de Entrega</p>
-          <span className="text-sm">(Debe seleccionar una opción de Envío)</span>
-          {order.payerInfo ? (
+          <span className="text-sm">
+            (Debe seleccionar una opción de Envío)
+          </span>
+
+          {order.payerInfo && addressReady ? (
             <>
+              <ShippingOptions
+                products={products}
+                handleClickShippingType={handleClickShippingType}
+                state={order.payerInfo.state}
+                totalAmt={totalAmt}
+              />
               {/* <div
                 className={`${
                   shipping === "estandar"
@@ -483,16 +504,16 @@ const Payment = () => {
                 </div>
                 <div>Gratis</div>
               </div> */}
-              <div
+              {/* <div
                 className={`${
                   shipping === "estandar"
                     ? "border-[3px] border-[#e46dc7] shadow-sm"
                     : "border-[1px] border-gray-700"
                 } w-full lg:w-3/5 flex justify-between p-4 cursor-pointer hover:bg-gray-50`}
-                onClick={() => handleClickShippingType("estandar")}
-                //   onClick={() => handleClickShippingType("Domicilio")}
-              >
-                <div className="">
+                onClick={() => handleClickShippingType("estandar")} */}
+              {/* //   onClick={() => handleClickShippingType("Domicilio")} */}
+              {/* > */}
+              {/* <div className="">
                   <div className="h-auto">
                     <h1 className="text-lg font-bold">Envío a Domicilio</h1>
                     <h1 className="text-lg  text-gray-600 ">
@@ -505,7 +526,7 @@ const Payment = () => {
                   </div>
                 </div>
                 <div>Gratis</div>
-              </div>
+              </div> */}
             </>
           ) : (
             ""
@@ -531,7 +552,7 @@ const Payment = () => {
 
         <div className="w-full space-y-4">
           <p className="font-bold text-2xl uppercase">Medio de Pago</p>
-          {readyToPay ? (
+          {readyToPay && order.shipment !== null ? (
             <>
               <div
                 className={`${
@@ -580,9 +601,7 @@ const Payment = () => {
                 {paymentMethod === "mp" ? (
                   <div className="flex flex-wrap py-3 gap-2">
                     {tarjetas?.map((tarjeta) => (
-                      <img className="w-14" 
-                      alt="card-icon"
-                      src={tarjeta} />
+                      <img className="w-14" alt="card-icon" src={tarjeta} />
                     ))}
                     {otherPaymentMethods?.map((payment) => (
                       <img src={payment} className="w-14" />
@@ -629,9 +648,11 @@ const Payment = () => {
             {products?.map((product) => (
               <div className="flex justify-between gap-6">
                 <div className="w-24 ">
-                  <img className="w-full" 
-                  alt={product.name}
-                  src={product.image} />
+                  <img
+                    className="w-full"
+                    alt={product.name}
+                    src={product.image}
+                  />
                 </div>
                 <div className="w-full text-gray-800">
                   <p>
@@ -652,7 +673,7 @@ const Payment = () => {
                 ${formatPrice(totalAmt)}
               </span>
             </p>
-            <p className="flex items-center justify-between py-1.5 text-lg font-medium">
+            {shippmentCharge !== null ?  <p className="flex items-center justify-between py-1.5 text-lg font-medium">
               Costo de envío
               <span className="font-semibold tracking-wide font-titleFont">
                 {shipping === "estandar"
@@ -661,7 +682,7 @@ const Payment = () => {
                   ? "Gratis"
                   : `$${formatPrice(shippmentCharge)}`}
               </span>
-            </p>
+            </p> : ""}
             {paymentMethod === "tb" && transferDiscount !== 0 ? (
               <p className="flex items-center justify-between border-b-0 py-1.5 text-lg font-medium">
                 Descuento
@@ -679,31 +700,31 @@ const Payment = () => {
               </span>
             </p>
             <div className="my-4">
-                <p className="text-lg font-semibold">Cupón de Descuento</p>
-                <div className="flex gap-2 items-center mt-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Ingresa tu código"
-                    className="border border-gray-300 rounded px-4 py-2 w-full"
-                  />
-                  <button
-                    onClick={handleApplyCoupon}
-                    className="bg-primeColor text-white px-4 py-2 rounded hover:bg-pink-600 duration-300"
-                  >
-                    Aplicar
-                  </button>
-                </div>
-                {couponValid && couponDiscount > 0 && couponSent && (
-                  <p className="text-green-600 mt-2">
-                    Cupón aplicado: {couponDiscount}% de descuento
-                  </p>
-                )}
-                {!couponValid && couponCode !== "" && couponSent && (
-                  <p className="text-red-600 mt-2">Cupón no válido</p>
-                )}
+              <p className="text-lg font-semibold">Cupón de Descuento</p>
+              <div className="flex gap-2 items-center mt-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  placeholder="Ingresa tu código"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  className="bg-primeColor text-white px-4 py-2 rounded hover:bg-pink-600 duration-300"
+                >
+                  Aplicar
+                </button>
               </div>
+              {couponValid && couponDiscount > 0 && couponSent && (
+                <p className="text-green-600 mt-2">
+                  Cupón aplicado: {couponDiscount}% de descuento
+                </p>
+              )}
+              {!couponValid && couponCode !== "" && couponSent && (
+                <p className="text-red-600 mt-2">Cupón no válido</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

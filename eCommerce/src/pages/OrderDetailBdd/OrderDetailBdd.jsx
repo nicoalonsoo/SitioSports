@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { logoTransparent } from "../../assets/images";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify"; // Asegúrate de importar ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Importa los estilos de ToastContainer
 
 const OrderDetailBdd = () => {
   const [isChanging, setIsChanging] = useState(false);
@@ -53,7 +53,10 @@ const OrderDetailBdd = () => {
     } else {
       setLoading(true);
       axios
-        .put(`https://sitiosports-production.up.railway.app/order/${order.id}`, changes)
+        .put(
+          `https://sitiosports-production.up.railway.app/order/${order.id}`,
+          changes
+        )
         .then((response) => {
           alert("Cambios guardados con éxito");
           setIsChanging(false);
@@ -135,7 +138,9 @@ const OrderDetailBdd = () => {
               <div className="flex flex-col justify-start text-md">
                 <h1 className="font-semibold text-lg">Cliente</h1>
                 <p>{order.name ? order.name : ""}</p>
-                <p>{`${order.items.length} ${order.items.length === 1 ? "Producto" : "Productos"}`}</p>
+                <p>{`${order.items.length} ${
+                  order.items.length === 1 ? "Producto" : "Productos"
+                }`}</p>
               </div>
               <div>
                 Estado:
@@ -179,7 +184,9 @@ const OrderDetailBdd = () => {
                 )}
               </div>
               <div className="flex flex-col justify-start text-md">
-                <h1 className="font-semibold text-lg">Información de Contacto</h1>
+                <h1 className="font-semibold text-lg">
+                  Información de Contacto
+                </h1>
                 {isChanging ? (
                   <input
                     type="email"
@@ -208,6 +215,11 @@ const OrderDetailBdd = () => {
                 </p>
                 <p>{order.shipment.zipCode}, AR</p>
                 <p>{order.shipment.apartment}</p>
+                {order.shipment.rate ? 
+                <div>
+                    <p>{order.shipment.rate.productName} {order.shipment.rate.deliveredType === "D" ? "a Domicilio" : "por Sucursal"}</p>
+                    <p>{order.shipment.rate}</p>
+                </div> : ""}
               </div>
             </div>
             <div className="w-1/2 space-y-2">

@@ -1,5 +1,5 @@
 const compressImage = (url) => {
-    const transformation = "/q_auto:low"; // Transformación a aplicar
+    const transformation = "/f_auto,q_auto:low"; // Transformación a aplicar
 
     // Buscamos "/upload/" en la URL para insertar la transformación después de él
     const uploadIndex = url.indexOf("/upload/");

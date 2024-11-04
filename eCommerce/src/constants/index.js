@@ -289,6 +289,37 @@ export const otherPaymentMethods = [
   "https://d26lpennugtm8s.cloudfront.net/assets/common/img/logos/payment/new_logos_payment/pagofacil@2x.png",
 ]
 
+export const provinces = [
+  { provinceCode: 'B', name: 'Buenos Aires' },
+  { provinceCode: 'K', name: 'Catamarca' },
+  { provinceCode: 'H', name: 'Chaco' },
+  { provinceCode: 'U', name: 'Chubut' },
+  { provinceCode: 'C', name: 'CABA' },
+  { provinceCode: 'X', name: 'Córdoba' },
+  { provinceCode: 'W', name: 'Corrientes' },
+  { provinceCode: 'E', name: 'Entre Ríos' },
+  { provinceCode: 'P', name: 'Formosa' },
+  { provinceCode: 'J', name: 'San Juan' },
+  { provinceCode: 'Y', name: 'Jujuy' },
+  { provinceCode: 'L', name: 'La Pampa' },
+  { provinceCode: 'F', name: 'La Rioja' },
+  { provinceCode: 'M', name: 'Mendoza' },
+  { provinceCode: 'N', name: 'Misiones' },
+  { provinceCode: 'Q', name: 'Neuquén' },
+  { provinceCode: 'R', name: 'Río Negro' },
+  { provinceCode: 'A', name: 'Salta' },
+  { provinceCode: 'Z', name: 'Santa Cruz' },
+  { provinceCode: 'S', name: 'Santa Fe' },
+  { provinceCode: 'D', name: 'San Luis' },
+  { provinceCode: 'G', name: 'Santiago del Estero' },
+  { provinceCode: 'V', name: 'Tierra del Fuego' },
+  { provinceCode: 'T', name: 'Tucumán' }
+];
+
+
+
+
+
 
 
 

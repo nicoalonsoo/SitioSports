@@ -11,7 +11,6 @@ import ItemCard from "./ItemCard";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import RecommendProducts from "../../components/pageProps/RecommendProducts/RecommendProducts";
 import formatPrice from "../../utils/formatPrice";
-
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -140,26 +139,29 @@ const Cart = () => {
                       ${formatPrice(totalAmt)}
                     </span>
                   </p>
-                  <p className="flex items-center justify-between py-1.5 text-lg font-medium">
+                  {/* <p className="flex items-center justify-between py-1.5 text-lg font-medium">
                     Envio
                     <span className="font-normal tracking-wide font-titleFont">
                       {shippingCharge === 0
                         ? "Gratis"
-                        : "Gratis"}
+                        : "Gratis"} */}
                        {/* : `$${formatPrice(shippingCharge)}`} */}
-                    </span>
-                  </p>
+                    {/* </span>
+                  </p> */}
                   <p className="flex items-center font-bold justify-between  py-1.5 text-lg ">
                     Total
                     <span className="font-bold tracking-wide text-lg font-titleFont">
                       $
                       {shippingCharge === "Gratis"
                         ? formatPrice(totalAmt)
-                        : formatPrice(totalAmt + shippingCharge)}
+                        : formatPrice(totalAmt + shippingCharge)}(Sin Envio)
                     </span>
                   </p>
                   {/* <p className="">(IVA incluido ${ivaAmount})</p> */}
                 </div>
+                {/* <div>
+                  <Rate dimensions={item.dimensions} />
+                </div> */}
                 <div className="w-full flex justify-end">
                   <button
                     className="w-full"

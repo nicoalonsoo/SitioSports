@@ -14,7 +14,7 @@ const CustomSlide = ({ Subtext, imgSrc, text, buttonLink, buttonText, buttonClic
       <Link
       onClick={buttonClick}
         to={buttonLink}
-        className="cursor-pointer rounded-sm absolute top-8 lg:top-20 left-4 lg:left-24 uppercase text-[10px] lg:text-xl p-2 lg:p-4 bg-gray-900 hover:bg-[#fc148c] duration-300 text-gray-50"
+        className="cursor-pointer rounded-sm absolute top-14 lg:top-32 left-4 lg:left-24 uppercase text-[10px] lg:text-xl p-2 lg:p-4 bg-gray-900 hover:bg-[#fc148c] duration-300 text-gray-50"
       >
         {buttonText}
       </Link>

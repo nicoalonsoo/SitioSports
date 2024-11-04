@@ -8,6 +8,7 @@ import SizeGuide from "./SizeGuide";
 import { motion, AnimatePresence } from "framer-motion";
 import formatPrice from "../../../utils/formatPrice";
 import thumbnailConvert from "../../../utils/convertThumbnail";
+import Rate from "../../Rate/Rate";
 
 const ProductInfo = ({
   productInfo,
@@ -208,6 +209,7 @@ const ProductInfo = ({
         price: productInfo.price,
         color: productInfo.color,
         variant: selectedVariant,
+        dimensions:productInfo.dimensions
       })
     );
     window.dataLayer = window.dataLayer || [];
@@ -227,6 +229,8 @@ const ProductInfo = ({
     setSelectedVariant(variant);
   };
 
+  console.log(productInfo);
+  
   return (
     <>
       <div className="flex flex-col items-start gap-4 lg:w-[40%]">
@@ -312,6 +316,10 @@ const ProductInfo = ({
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        <div>
+          <Rate detailPrice={productInfo.price} dimensions={productInfo.dimensions}/>
         </div>
 
         <div className="flex items-center justify-start gap-4">

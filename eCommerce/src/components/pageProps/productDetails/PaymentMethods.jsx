@@ -33,7 +33,7 @@ const PaymentMethods = () => {
             transferencia bancaria
           </p>
         </div>
-        <div className="underline">
+        <div className="underline hover:text-[#fc148c]">
           VER MEDIOS DE PAGO
           <AnimatePresence>
             {viewPaymentMethods && (
