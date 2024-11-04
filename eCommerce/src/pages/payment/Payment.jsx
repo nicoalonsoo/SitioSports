@@ -329,6 +329,16 @@ const Payment = () => {
                   ${formatPrice(totalAmt)}
                 </span>
               </p>
+              {paymentMethod === "tb" && transferDiscount !== 0 ? (
+                <p className="flex items-center justify-between border-b-0 py-1.5 text-lg font-medium">
+                  Descuento
+                  <span className="font-semibold tracking-wide font-titleFont">
+                    -${formatPrice(transferDiscount)}
+                  </span>
+                </p>
+              ) : (
+                ""
+              )}
               {shippmentCharge !== null ? (
                 <p className="flex items-center justify-between py-1.5 text-lg font-medium">
                   Costo de envío
@@ -341,16 +351,7 @@ const Payment = () => {
               ) : (
                 ""
               )}
-              {paymentMethod === "tb" && transferDiscount !== 0 ? (
-                <p className="flex items-center justify-between border-b-0 py-1.5 text-lg font-medium">
-                  Descuento
-                  <span className="font-semibold tracking-wide font-titleFont">
-                    -${formatPrice(transferDiscount)}
-                  </span>
-                </p>
-              ) : (
-                ""
-              )}
+              
               <p className="flex items-center justify-between text-pink-600 py-1.5 text-xl font-bold">
                 Total
                 <span className="font-bold tracking-wide text-xl font-titleFont">
@@ -671,16 +672,6 @@ const Payment = () => {
                 ${formatPrice(totalAmt)}
               </span>
             </p>
-            {shippmentCharge !== null ?  <p className="flex items-center justify-between py-1.5 text-lg font-medium">
-              Costo de envío
-              <span className="font-semibold tracking-wide font-titleFont">
-                {shipping === "estandar"
-                  ? "Gratis"
-                  : shippmentCharge === 0
-                  ? "Gratis"
-                  : `$${formatPrice(shippmentCharge)}`}
-              </span>
-            </p> : ""}
             {paymentMethod === "tb" && transferDiscount !== 0 ? (
               <p className="flex items-center justify-between border-b-0 py-1.5 text-lg font-medium">
                 Descuento
@@ -691,6 +682,17 @@ const Payment = () => {
             ) : (
               ""
             )}
+            {shippmentCharge !== null ?  <p className="flex items-center justify-between py-1.5 text-lg font-medium">
+              Costo de envío
+              <span className="font-semibold tracking-wide font-titleFont">
+                {shipping === "estandar"
+                  ? "Gratis"
+                  : shippmentCharge === 0
+                  ? "Gratis"
+                  : `$${formatPrice(shippmentCharge)}`}
+              </span>
+            </p> : ""}
+           
             <p className="flex items-center justify-between text-pink-600  py-1.5 text-xl font-bold">
               Total
               <span className="font-bold tracking-wide text-xl font-titleFont">
