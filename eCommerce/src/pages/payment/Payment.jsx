@@ -75,20 +75,17 @@ const Payment = () => {
     // Cálculo inicial según el método de pago
     if (paymentMethod === "tb") {
       // Si es transferencia bancaria (tb), aplicar el 15% de descuento
-      if (shippmentCharge === "Gratis") {
+      if (shippmentCharge === 0) {
         finalAmount = totalAmt * 0.85;
       } else {
-        finalAmount = (totalAmt + shippmentCharge) * 0.85;
+        finalAmount = ((totalAmt) * 0.85) + shippmentCharge;
       }
       let disc = totalAmt * 0.15;
       setTransferDiscount(disc);
     } else {
       // Si es otro método de pago
-      if (totalAmt !== "" && totalAmt > 45000) {
-        finalAmount = totalAmt;
-      } else {
         finalAmount = totalAmt + shippmentCharge;
-      }
+
     }
 
     // Aplicar el cupón si es válido
@@ -102,7 +99,7 @@ const Payment = () => {
 
   useEffect(() => {
     let finalAmount;
-    if (shippmentCharge !== 0) {
+    if (shippmentCharge > 0) {
       finalAmount = totalAmt + shippmentCharge;
     } else {
       finalAmount = totalAmt;
@@ -113,6 +110,7 @@ const Payment = () => {
     //   shipment: shippmentCharge,
     // }));
   }, [totalAmt, shippmentCharge]);
+
 
   const handlePay = async () => {
     if (paymentMethod === "mp") {
@@ -267,7 +265,7 @@ const Payment = () => {
       setCouponSent(true);
     }
   };
-  console.log(order.shipment, shippmentCharge, shipping);
+
 
   return (
     <div className="flex flex-wrap w-screen h-full justify-start items-start px-2 lg:px-32 xl:px-44 pb-20 relative">
