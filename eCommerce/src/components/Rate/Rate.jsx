@@ -182,21 +182,23 @@ const Rate = ({ dimensions, detailPrice }) => {
               </p>
             )}
 
-            {rateCategory.rates.map((rate, index) => (
-              <div key={index} className="border-b border-gray-300 py-2">
-                <p className="font-bold">{rate.productName}</p>
-                <p>
-                  Precio:{" "}
-                  {rateCategory.type === "Sucursal" && totalAmount > 35000
-                    ? "Gratis"
-                    : `$${rate.price.toLocaleString()}`}
-                </p>
-                <p>
-                  Llega entre el {formatDate(rate.deliveryTimeMin)} y el{" "}
-                  {formatDate(rate.deliveryTimeMax)}
-                </p>
-              </div>
-            ))}
+            {rateCategory.rates
+              .filter((rate) => rate.productName.includes("Clasico")) // Filtra solo los envíos "Expreso"
+              .map((rate, index) => (
+                <div key={index} className="border-b border-gray-300 py-2">
+                  <p className="font-bold">{rate.productName}</p>
+                  <p>
+                    Precio:{" "}
+                    {rateCategory.type === "Sucursal" && totalAmount > 35000
+                      ? "Gratis"
+                      : `$${rate.price.toLocaleString()}`}
+                  </p>
+                  <p>
+                    Llega entre el {formatDate(rate.deliveryTimeMin)} y el{" "}
+                    {formatDate(rate.deliveryTimeMax)}
+                  </p>
+                </div>
+              ))}
           </div>
         ))}
       </div>

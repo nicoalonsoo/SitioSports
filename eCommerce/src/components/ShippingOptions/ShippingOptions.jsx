@@ -82,7 +82,7 @@ const ShippingOptions = ({
     } else {
       const newToken = await handleAuthToken();
       const newExpireDate = new Date();
-      newExpireDate.setSeconds(newExpireDate.getSeconds() + 3600); // Ajusta el tiempo según el `expire` que recibes
+      newExpireDate.setSeconds(newExpireDate.getSeconds() + 3600);
       localStorage.setItem(
         "correoToken",
         JSON.stringify({ token: newToken, expire: newExpireDate.toISOString() })
@@ -121,13 +121,15 @@ const ShippingOptions = ({
       ]);
 
       const combinedRates = [
-        { type: "Domicilio", rates: responses[0].data.rates },
+        { type: "Domicilio", rates: responses[0].data.rates.filter(rate => rate.productName.includes("Clasico")) },
         { 
           type: "Sucursal", 
-          rates: responses[1].data.rates.map(rate => ({
-            ...rate,
-            price: totalAmt > 35000 ? 0 : rate.price // Establece el precio a 0 si totalAmt > 35000
-          }))
+          rates: responses[1].data.rates
+            .filter(rate => rate.productName.includes("Clasico"))
+            .map(rate => ({
+              ...rate,
+              price: totalAmt > 35000 ? 0 : rate.price
+            }))
         },
       ];
 
@@ -164,14 +166,14 @@ const ShippingOptions = ({
 
   const handleSelectRate = (rate) => {
     setSelectedRate(rate);
-    setSelectedAgencyRate(null); // Desmarca la tarifa de sucursal
+    setSelectedAgencyRate(null);
     handleClickShippingType(rate.price, rate);
   };
 
   const handleSelectAgency = (e) => {
     setSelectedAgency(e.target.value);
-    setSelectedRate(null); // Desmarca la tarifa de domicilio
-    setSelectedAgencyRate(null); // Reinicia la tarifa seleccionada cuando se cambia la agencia
+    setSelectedRate(null);
+    setSelectedAgencyRate(null);
     handleClickShippingType(null, null);
   };
 
@@ -181,9 +183,10 @@ const ShippingOptions = ({
       agencyAddress: selectedAgency
     };
     setSelectedAgencyRate(rate);
-    setSelectedRate(rate); // Desmarca la tarifa de domicilio
+    setSelectedRate(rate);
     handleClickShippingType(rate.price, rateWithAgencyAddress);
   };
+
   return (
     <div>
       <div className=" ">
