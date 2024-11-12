@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import CustomSlide from "./CustomSlide";
-import { banner1 } from "../../assets/images";
-import banner_prueba from "../../assets/banner_prueba.webp"
-import banner_prueba2 from "../../assets/banner_prueba2.webp"
+import { banner1, banner2, banner3 } from "../../assets/images";
+
 import { cleanFilters, toggleBrand, toggleCategory } from "../../redux/orebiSlice";
 import { useDispatch } from "react-redux";
 import { allCategories, allBrands } from "../../constants";
@@ -27,7 +26,7 @@ const Banner = () => {
   const slides = [
     {
       imgSrc:
-        cybermonday,
+        banner2,
       text: "Quality Printing Solutions",
       Subtext:
         "Discover our wide range of printers and consumables designed for professional printing needs.",
@@ -41,7 +40,7 @@ const Banner = () => {
     },
     {
       imgSrc:
-      cybermonday2,
+      banner1,
       text: "Quality Printing Solutions",
       Subtext:
         "Discover our wide range of printers and consumables designed for professional printing needs.",
@@ -54,7 +53,7 @@ const Banner = () => {
       },
     },
     {
-      imgSrc: cybermonday3,
+      imgSrc: banner3,
       text: "Enhance Your Printing Experience",
       Subtext:
         "Explore our premium printers and consumables for exceptional results",
