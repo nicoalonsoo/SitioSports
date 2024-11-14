@@ -52,13 +52,14 @@ import banner3 from "./banner/banner_prueba2.webp";
 
 import offer1 from "./offer1.webp";
 import offer2 from "./offer2.webp";
-import video_arg from "./video_arg.mp4";
+import video_arg from "./sitiosports_nuevo.mp4";
 
 import spinner from "./gif/spinner.gif";
 
 import cybermonday from "./banner/cybermonday/cybermonday1.webp";
 import cybermonday2 from "./banner/cybermonday/cybermonday2.webp";
 import cybermonday3 from "./banner/cybermonday/cybermonday3.webp";
+
 export {
   shipping_country,
   sizes_guia,
