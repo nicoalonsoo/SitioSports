@@ -62,6 +62,7 @@ const Rate = ({ dimensions, detailPrice }) => {
     if (storedToken && new Date(storedToken.expire) > now) {
       return storedToken.token;
     } else {
+      
       const newToken = await handleAuthToken();
       const newExpireDate = new Date();
       newExpireDate.setSeconds(newExpireDate.getSeconds() + 3600); // Ajusta el tiempo según el `expire` que recibes
@@ -79,32 +80,20 @@ const Rate = ({ dimensions, detailPrice }) => {
       localStorage.setItem("postalCode", postalCode);
       const token = await getToken();
 
-      const responses = await Promise.all([
-        axios.post(
-          "https://api.correoargentino.com.ar/micorreo/v1/rates",
-          { ...product, postalCodeDestination: postalCode, deliveredType: "D" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        ),
-        axios.post(
-          "https://api.correoargentino.com.ar/micorreo/v1/rates",
-          { ...product, postalCodeDestination: postalCode, deliveredType: "S" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        ),
-      ]);
+      // Realizar una sola solicitud al back-end
+      const response = await axios.post(
+        "https://sitiosports-production.up.railway.app/rates",
+        {
+          dimensions: product.dimensions,
+          postalCodeDestination: postalCode,
+          token: token,
+        }
+      );
 
+      // Acceder a ambas tarifas (domicilio y sucursal) en la respuesta
       const combinedRates = [
-        { type: "Domicilio", rates: responses[0].data.rates },
-        { type: "Sucursal", rates: responses[1].data.rates },
+        { type: "Domicilio", rates: response.data.domicilio },
+        { type: "Sucursal", rates: response.data.sucursal },
       ];
 
       setRates(combinedRates);
@@ -120,7 +109,11 @@ const Rate = ({ dimensions, detailPrice }) => {
   function formatDate(days) {
     const date = new Date();
     date.setDate(date.getDate() + parseInt(days));
-    return date.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "numeric" });
+    return date.toLocaleDateString("es-AR", {
+      weekday: "long",
+      day: "numeric",
+      month: "numeric",
+    });
   }
 
   return (
@@ -131,7 +124,7 @@ const Rate = ({ dimensions, detailPrice }) => {
           <span className="text-[#fc148c] font-bold">Medios de envío</span>
         </p>
       </div>
-      
+
       <p className="text-sm text-gray-700 mt-2">
         {cartProducts.length > 0
           ? `Sumando este producto, el envío queda en: $${totalAmount.toLocaleString()}`
@@ -173,9 +166,11 @@ const Rate = ({ dimensions, detailPrice }) => {
         {rates.map((rateCategory) => (
           <div key={rateCategory.type} className="mb-4">
             <h3 className="font-bold text-lg">
-              {rateCategory.type === "Domicilio" ? "Envío a domicilio" : "Retirar por"}
+              {rateCategory.type === "Domicilio"
+                ? "Envío a domicilio"
+                : "Retirar por"}
             </h3>
-            
+
             {rateCategory.type === "Sucursal" && (
               <p className="text-sm text-gray-600 mt-1 underline">
                 En el checkout podrás ver y seleccionar tu sucursal más cercana.
