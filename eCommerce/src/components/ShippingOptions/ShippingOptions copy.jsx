@@ -39,7 +39,6 @@ const ShippingOptions = ({
       fetchNearbyAgencies(selectedProvince.provinceCode);
     }
   }, [selectedProvince]);
-  
 
   const calculateDimensions = (products) => {
     let totalWeight = 0;
@@ -91,40 +90,49 @@ const ShippingOptions = ({
       return newToken;
     }
   };
+
   const handleCalculateRate = async (postalCode = cp) => {
     try {
       setIsLoading(true);
       localStorage.setItem("postalCode", postalCode);
-  
-      // Solicitud a tu backend
-      const response = await axios.post(
-        "https://sitiosports-production.up.railway.app/rates",
-        {
-          dimensions: product.dimensions,
-          postalCodeDestination: postalCode,
-          token: await getToken(),
-        }
-      );
-  
-      // Filtrar solo los productos "Clasico" y ajustar tarifas de sucursal
+      const token = await getToken();
+
+      const responses = await Promise.all([
+        axios.post(
+          "https://api.correoargentino.com.ar/micorreo/v1/rates",
+          { ...product, postalCodeDestination: postalCode, deliveredType: "D" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        ),
+        axios.post(
+          "https://api.correoargentino.com.ar/micorreo/v1/rates",
+          { ...product, postalCodeDestination: postalCode, deliveredType: "S" },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        ),
+      ]);
+
       const combinedRates = [
-        {
-          type: "Domicilio",
-          rates: response.data.domicilio.filter((rate) =>
-            rate.productName.includes("Clasico")
-          ),
-        },
-        {
-          type: "Sucursal",
-          rates: response.data.sucursal
-            .filter((rate) => rate.productName.includes("Clasico"))
-            .map((rate) => ({
+        { type: "Domicilio", rates: responses[0].data.rates.filter(rate => rate.productName.includes("Clasico")) },
+        { 
+          type: "Sucursal", 
+          rates: responses[1].data.rates
+            .filter(rate => rate.productName.includes("Clasico"))
+            .map(rate => ({
               ...rate,
-              price: totalAmt > 35000 ? 0 : rate.price, // Ajustar tarifas según monto total
-            })),
+              price: totalAmt > 35000 ? 0 : rate.price
+            }))
         },
       ];
-  
+
       setRates(combinedRates);
       setError("");
     } catch (error) {
@@ -134,32 +142,27 @@ const ShippingOptions = ({
       setIsLoading(false);
     }
   };
-  
+
   const fetchNearbyAgencies = async (provinceCode) => {
     try {
-      setIsLoading(true);
-      const response = await axios.post(
-        "https://sitiosports-production.up.railway.app/agencies",
+      const token = await getToken();
+      const response = await axios.get(
+        `https://api.correoargentino.com.ar/micorreo/v1/agencies?customerId=0000550997&provinceCode=${provinceCode}`,
         {
-          provinceCode: provinceCode,
-          token: await getToken(),
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      console.log(response.data);
-      
-      const agencies = response.data.agencies.filter((agency) =>
+      const agencies = response.data.filter((agency) =>
         agency.nearByPostalCode?.split(",").includes(cp)
       );
       setNearbyAgencies(agencies);
-      setError("");
     } catch (error) {
-      console.error("Error al obtener agencias:", error);
+      console.error("Error fetching agencies:", error);
       setError("Hubo un error al obtener las agencias. Inténtalo de nuevo.");
-    } finally {
-      setIsLoading(false);
     }
   };
-  
 
   const handleSelectRate = (rate) => {
     setSelectedRate(rate);
