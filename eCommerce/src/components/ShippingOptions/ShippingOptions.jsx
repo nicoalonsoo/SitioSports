@@ -9,7 +9,7 @@ const ShippingOptions = ({
   products,
   handleClickShippingType,
   state,
-  totalAmt
+  totalAmt,
 }) => {
   const [cp, setCp] = useState("");
   const [rates, setRates] = useState([]);
@@ -39,7 +39,6 @@ const ShippingOptions = ({
       fetchNearbyAgencies(selectedProvince.provinceCode);
     }
   }, [selectedProvince]);
-  
 
   const calculateDimensions = (products) => {
     let totalWeight = 0;
@@ -95,7 +94,7 @@ const ShippingOptions = ({
     try {
       setIsLoading(true);
       localStorage.setItem("postalCode", postalCode);
-  
+
       // Solicitud a tu backend
       const response = await axios.post(
         "https://sitiosports-production.up.railway.app/rates",
@@ -105,7 +104,7 @@ const ShippingOptions = ({
           token: await getToken(),
         }
       );
-  
+
       // Filtrar solo los productos "Clasico" y ajustar tarifas de sucursal
       const combinedRates = [
         {
@@ -124,7 +123,7 @@ const ShippingOptions = ({
             })),
         },
       ];
-  
+
       setRates(combinedRates);
       setError("");
     } catch (error) {
@@ -134,7 +133,7 @@ const ShippingOptions = ({
       setIsLoading(false);
     }
   };
-  
+
   const fetchNearbyAgencies = async (provinceCode) => {
     try {
       setIsLoading(true);
@@ -145,13 +144,20 @@ const ShippingOptions = ({
           token: await getToken(),
         }
       );
-      console.log(response.data);
-      
+  
       const agencies = response.data.agencies.filter((agency) =>
-        agency.nearByPostalCode?.split(",").includes(cp)
+        agency.location.address.postalCode?.startsWith(`${provinceCode}${cp}`)
       );
+  
+      if (agencies.length === 0) {
+        setError(
+          "No se encontraron sucursales para la combinación de provincia y código postal ingresados. Por favor, verifica los datos que ingresaste e inténtalo de nuevo."
+        );
+      } else {
+        setError("");
+      }
+  
       setNearbyAgencies(agencies);
-      setError("");
     } catch (error) {
       console.error("Error al obtener agencias:", error);
       setError("Hubo un error al obtener las agencias. Inténtalo de nuevo.");
@@ -159,7 +165,6 @@ const ShippingOptions = ({
       setIsLoading(false);
     }
   };
-  
 
   const handleSelectRate = (rate) => {
     setSelectedRate(rate);
@@ -177,7 +182,7 @@ const ShippingOptions = ({
   const handleSelectAgencyRate = (rate) => {
     const rateWithAgencyAddress = {
       ...rate,
-      agencyAddress: selectedAgency
+      agencyAddress: selectedAgency,
     };
     setSelectedAgencyRate(rate);
     setSelectedRate(rate);
@@ -209,6 +214,14 @@ const ShippingOptions = ({
           </span>
         </p>
       </div>
+      <a
+        className="text-xs hover:text-[#fc148c] underline"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.correoargentino.com.ar/formularios/cpa"
+      >
+        No sé mi código postal
+      </a>
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -238,14 +251,18 @@ const ShippingOptions = ({
                   >
                     <div>
                       <h1 className="text-lg font-bold">{rate.productName}</h1>
-                      <h1 className="text-lg text-gray-600">Envío a Domicilio</h1>
+                      <h1 className="text-lg text-gray-600">
+                        Envío a Domicilio
+                      </h1>
                       <h1 className="text-md font-semibold text-gray-700">
                         {rate.deliveryTimeMin} - {rate.deliveryTimeMax} días
                         hábiles
                       </h1>
                     </div>
                     <div>
-                      {rate.price === 0 ? "Gratis" : `$${rate.price.toLocaleString()}`}
+                      {rate.price === 0
+                        ? "Gratis"
+                        : `$${rate.price.toLocaleString()}`}
                     </div>
                   </div>
                 ))
@@ -259,14 +276,16 @@ const ShippingOptions = ({
                   >
                     <option value="">Elige una sucursal...</option>
                     {nearbyAgencies.map((agency, index) => (
-                      <option key={index} value={` ${agency.name} - ${agency.location.address.streetName}, ${agency.location.address.streetNumber}, ${agency.location.address.locality}`}>
+                      <option
+                        key={index}
+                        value={` ${agency.name} - ${agency.location.address.streetName}, ${agency.location.address.streetNumber}, ${agency.location.address.locality}`}
+                      >
                         {agency.name} - {agency.location.address.streetName}{" "}
                         {agency.location.address.streetNumber},{" "}
                         {agency.location.address.locality}
                       </option>
                     ))}
                   </select>
-
                   {selectedAgency && (
                     <div className="mt-4">
                       {rateCategory.rates.map((rate, index) => (
@@ -280,14 +299,18 @@ const ShippingOptions = ({
                           onClick={() => handleSelectAgencyRate(rate)}
                         >
                           <div>
-                            <h1 className="text-lg font-bold">{rate.productName}</h1>
+                            <h1 className="text-lg font-bold">
+                              {rate.productName}
+                            </h1>
                             <h1 className="text-md font-semibold text-gray-700">
-                              {rate.deliveryTimeMin} - {rate.deliveryTimeMax} días
-                              hábiles
+                              {rate.deliveryTimeMin} - {rate.deliveryTimeMax}{" "}
+                              días hábiles
                             </h1>
                           </div>
                           <div>
-                            {rate.price === 0 ? "Gratis" : `$${rate.price.toLocaleString()}`}
+                            {rate.price === 0
+                              ? "Gratis"
+                              : `$${rate.price.toLocaleString()}`}
                           </div>
                         </div>
                       ))}

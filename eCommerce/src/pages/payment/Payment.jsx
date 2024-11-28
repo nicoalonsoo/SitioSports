@@ -71,28 +71,35 @@ const Payment = () => {
 
   useEffect(() => {
     let finalAmount;
-
+  
+    // Función para redondear hacia arriba con dos decimales
+    const roundUpToTwoDecimals = (num) => {
+      return Math.ceil(num * 100) / 100;
+    };
+  
     // Cálculo inicial según el método de pago
     if (paymentMethod === "tb") {
       // Si es transferencia bancaria (tb), aplicar el 15% de descuento
       if (shippmentCharge === 0) {
         finalAmount = totalAmt * 0.85;
       } else {
-        finalAmount = ((totalAmt) * 0.85) + shippmentCharge;
+        finalAmount = totalAmt * 0.85 + shippmentCharge;
       }
       let disc = totalAmt * 0.15;
-      setTransferDiscount(disc);
+      setTransferDiscount(roundUpToTwoDecimals(disc));
     } else {
       // Si es otro método de pago
-        finalAmount = totalAmt + shippmentCharge;
-
+      finalAmount = totalAmt + shippmentCharge;
     }
-
+  
     // Aplicar el cupón si es válido
     if (couponValid && couponDiscount > 0) {
       finalAmount = finalAmount - (finalAmount * couponDiscount) / 100;
     }
-
+  
+    // Redondear el monto final hacia arriba con dos decimales
+    finalAmount = roundUpToTwoDecimals(finalAmount);
+  
     // Actualizamos el total final con descuento por transferencia o cupón
     setShipmentPlusTotal(finalAmount);
   }, [totalAmt, shippmentCharge, paymentMethod, couponDiscount, couponValid]);
@@ -111,6 +118,7 @@ const Payment = () => {
     // }));
   }, [totalAmt, shippmentCharge]);
 
+console.log(order);
 
   const handlePay = async () => {
     if (paymentMethod === "mp") {
@@ -175,6 +183,7 @@ const Payment = () => {
       }
     }
   };
+
 
   const handleSubmitContact = (email) => {
     setEmail(email);

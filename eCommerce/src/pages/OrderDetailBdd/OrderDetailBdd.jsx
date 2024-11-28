@@ -217,7 +217,7 @@ const OrderDetailBdd = () => {
                 <p>{order.shipment.apartment}</p>
                 {order.shipment.rate ? 
                 <div>
-                    <p>{order.shipment.rate.productName} {order.shipment.rate.deliveredType === "D" ? "a Domicilio" : "por Sucursal"}</p>
+                    <p>{order.shipment.rate.productName} {order.shipment.rate.deliveredType === "D" ? "a Domicilio" : `por Sucursal ${order.shipment.rate.agencyAddress ? order.shipment.rate.agencyAddress : ""}`}</p>
                     {/* <p>{order.shipment.rate}</p> */}
                 </div> : ""}
               </div>

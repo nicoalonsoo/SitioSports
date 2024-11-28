@@ -121,7 +121,7 @@ const ShippingOptions = ({
       ]);
 
       const combinedRates = [
-        { type: "Domicilio", rates: responses[0].data.rates.filter(rate => rate.productName.includes("Clasico")) },
+        { type: "Domicilio", rates: responses[0].data.rates.filter(rate => rate.productName.includes(" ")) },
         { 
           type: "Sucursal", 
           rates: responses[1].data.rates
