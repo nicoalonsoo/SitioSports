@@ -229,6 +229,21 @@ export const allTags = [
   },
 ];
 
+export const promotionTypes = [
+  {
+    _id: 600,
+    title: "2x1",
+  },
+  {
+    _id: 601,
+    title: "3x2",
+  },
+  {
+    _id: 602,
+    title: "Regalo",
+  },
+];
+
 export const botinesSizes = [
   { size: "39", stock: 0, sold: 0 },
   { size: "40", stock: 0, sold: 0 },

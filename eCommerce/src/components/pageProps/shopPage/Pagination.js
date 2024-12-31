@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../home/Products/Product";
 import { useSelector } from "react-redux";
-
+import ProductPromotion from "../../home/Products/ProductPromotion";
+import { useLocation } from "react-router-dom";
 function Items({
   itemOffset,
   currentItems,
@@ -14,7 +15,7 @@ function Items({
   searchTag,
   handleEmpty,
   itemsPerPage,
-  handleShowButton
+  handleShowButton,
 }) {
   const [searchedProducts, setSearchedProducts] = useState([]);
 
@@ -96,13 +97,11 @@ function Items({
   }, [sortedItems, handleEmpty]);
 
   useEffect(() => {
-   handleShowButton(sortedItems.length)
+    handleShowButton(sortedItems.length);
   }, [itemsPerPage, sortedItems]);
 
   const endOffset = itemOffset + itemsPerPage;
   const totalItems = sortedItems.slice(itemOffset, endOffset);
-
-  
 
   return (
     <>
@@ -141,16 +140,56 @@ function Items({
   );
 }
 
+function ItemsPromotions({ items, currentItems, promotions }) {
+  console.log(items);
+
+  return (
+    <>
+      {items.length === 0 ? (
+        <div className="w-full">
+          <h1 className="text-center text-gray-800 font-semibold text-lg lg:text-xl px-0">
+            Tus parámetros de búsqueda no concuerdan con ninguno de nuestros
+            productos, ¡sigue buscando!
+          </h1>
+        </div>
+      ) : (
+        items.map((item) => (
+          <div key={item._id} className="w-full">
+            <ProductPromotion
+              _id={item.id}
+              slug={item.slug}
+              title={item.title}
+              description={item.description}
+              img={item.img}
+              type={item.type}
+              endDate={item.endDate}
+              categories={item.categories ? item.categories : ""}
+              giftCategory={item.giftCategory ? item.giftCategory : ""}
+            />
+          </div>
+        ))
+      )}
+    </>
+  );
+}
+
 const Pagination = ({
   commissions,
   sort,
   searchTag,
   handleChangeSearchTag,
 }) => {
+  const location = useLocation(); // Hook para obtener la ubicación actual
+  const queryParams = new URLSearchParams(location.search); // Parsear query string
+  const promotionQuery = queryParams.get("promociones"); // Obtener valor de 'promocion'
+  const promotions = promotionQuery === "ss"; // Verificar si 'promocion=ss'
   const items = useSelector((state) => {
     if (commissions) {
       // Si es así, devolvemos los productos por encargo
       return state.orebiReducer.commissions;
+    } else if (promotions) {
+      // Si es así, devolvemos las promociones
+      return state.orebiReducer.promotions;
     } else {
       // Si no, devolvemos todos los productos
       return state.orebiReducer.products;
@@ -161,6 +200,7 @@ const Pagination = ({
   const [itemStart, setItemStart] = useState(1);
   const [empty, setEmpty] = useState(false);
   const [localSearchTag, setLocalSearchTag] = useState("");
+console.log(items, "items");
 
   const endOffset = itemOffset + itemsPerPage;
   const currentItems = items;
@@ -218,8 +258,6 @@ const Pagination = ({
   };
   const [showButton, setShowButton] = useState(false);
   const handleShowButton = (value) => {
-
-    
     if (value < itemsPerPage) {
       setShowButton(false);
     } else {
@@ -237,20 +275,38 @@ const Pagination = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 mdl:gap-4 lg:gap-10">
-          <Items
-            itemOffset={itemOffset}
-            currentItems={currentItems}
-            selectedBrands={selectedBrands}
-            selectedCategories={selectedCategories}
-            selectedSizes={selectedSizes}
-            selectedSubcategories={selectedSubcategories}
-            selectedTags={selectedTags}
-            sort={sort}
-            searchTag={localSearchTag}
-            handleEmpty={handleEmpty}
-            itemsPerPage={itemsPerPage}
-            handleShowButton={handleShowButton}
-          />
+          {promotions ? (
+            <ItemsPromotions
+             items={items}
+              currentItems={currentItems.promotion}
+              selectedBrands={selectedBrands}
+              selectedCategories={selectedCategories}
+              selectedSizes={selectedSizes}
+              selectedSubcategories={selectedSubcategories}
+              selectedTags={selectedTags}
+              sort={sort}
+              searchTag={localSearchTag}
+              handleEmpty={handleEmpty}
+              itemsPerPage={itemsPerPage}
+              handleShowButton={handleShowButton}
+              promotions={promotions}
+            />
+          ) : (
+            <Items
+              itemOffset={itemOffset}
+              currentItems={currentItems}
+              selectedBrands={selectedBrands}
+              selectedCategories={selectedCategories}
+              selectedSizes={selectedSizes}
+              selectedSubcategories={selectedSubcategories}
+              selectedTags={selectedTags}
+              sort={sort}
+              searchTag={localSearchTag}
+              handleEmpty={handleEmpty}
+              itemsPerPage={itemsPerPage}
+              handleShowButton={handleShowButton}
+            />
+          )}
         </div>
       )}
       {/* Botón "Cargar más" */}

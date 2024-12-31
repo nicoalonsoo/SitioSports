@@ -2,15 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
-import { resetCart, deleteItem, increaseQuantity, drecreaseQuantity, updatePrice } from "../../redux/orebiSlice";
+import {
+  resetCart,
+  deleteItem,
+  increaseQuantity,
+  drecreaseQuantity,
+  updatePrice,
+} from "../../redux/orebiSlice";
 import { emptyCart } from "../../assets/images/index";
 import ItemCard from "./ItemCard";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import RecommendProducts from "../../components/pageProps/RecommendProducts/RecommendProducts";
 import formatPrice from "../../utils/formatPrice";
+import { RxCross2 } from "react-icons/rx";
+
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,8 +26,12 @@ const Cart = () => {
   const allProducts = useSelector((state) => state.orebiReducer.products);
   const [totalAmt, setTotalAmt] = useState("");
   const [shippingCharge, setShippingCharge] = useState("");
+  const [promotions, setPromotions] = useState([]);
+  const [normalProducts, setNormalProducts] = useState([]);
+console.log(products);
 
   useEffect(() => {
+    // Calcular el monto total
     let price = 0;
     products.map((item) => {
       price += item.price * item.quantity;
@@ -28,66 +40,113 @@ const Cart = () => {
     setTotalAmt(price);
   }, [products]);
 
-
-
-
   useEffect(() => {
     setShippingCharge(0);
   }, [totalAmt]);
 
   useEffect(() => {
-    products.forEach(cartItem => {
-      const foundProduct = allProducts.find(product => product.id === cartItem.id);
+    // Separar productos en promociones y normales
+    const promoItems = products.filter((item) => item.promotion);
+    const normalItems = products.filter((item) => !item.promotion);
+    setPromotions(promoItems);
+    setNormalProducts(normalItems);
+  }, [products]);
+
+  useEffect(() => {
+    // Verificar actualizaciones de precios y stock
+    products.forEach((cartItem) => {
+      const foundProduct = allProducts.find(
+        (product) => product.id === cartItem.id
+      );
       if (foundProduct) {
         if (cartItem.price !== foundProduct.price) {
-          // Despacha una acción para actualizar el precio
-          dispatch(updatePrice({ id: cartItem.id, newPrice: foundProduct.price }));
-          
-          toast.info(`El precio de ${cartItem.name} ha cambiado a $${foundProduct.price}.`, {
-            autoClose: 10000
-          });
+          dispatch(
+            updatePrice({ id: cartItem.id, newPrice: foundProduct.price })
+          );
+          toast.info(
+            `El precio de ${cartItem.name} ha cambiado a $${foundProduct.price}.`,
+            {
+              autoClose: 10000,
+            }
+          );
         }
-//quiero hacer aca que si cartItem.price que coincide con un producto de allProducts es distinto de el producto que coincide en allProducts lo cambie por el nuevo price
-        const foundVariant = foundProduct.variants.find(variant => variant.id === cartItem.variant.id);
-        
+
+        const foundVariant = foundProduct.variants.find(
+          (variant) => variant.id === cartItem.variant.id
+        );
+
         if (foundVariant) {
-          const foundSize = foundVariant.sizes.find(size => size.size === cartItem.size);
+          const foundSize = foundVariant.sizes.find(
+            (size) => size.size === cartItem.size
+          );
           if (foundSize) {
             if (foundSize.stock < cartItem.quantity) {
               const difference = cartItem.quantity - foundSize.stock;
               for (let i = 0; i < difference; i++) {
                 dispatch(drecreaseQuantity({ id: cartItem.id }));
               }
-              toast.info(`${cartItem.name} ahora tiene ${foundSize.stock} unidades disponibles.`, {
-                autoClose: 10000
-              });
+              toast.info(
+                `${cartItem.name} ahora tiene ${foundSize.stock} unidades disponibles.`,
+                { autoClose: 10000 }
+              );
               if (foundSize.stock === 0) {
                 dispatch(deleteItem({ id: cartItem.id, size: cartItem.size }));
-                toast.error(`${cartItem.name} fue quitado del carrito por falta de stock.`, {
-                  autoClose: 10000
-                });
+                toast.error(
+                  `${cartItem.name} fue quitado del carrito por falta de stock.`,
+                  { autoClose: 10000 }
+                );
               }
             }
-          } else {
-            console.log("NO SIZE FOUND");
           }
-        } else {
-          console.log("NO VARIANT FOUND");
         }
-      } else {
-        console.log("NO PRODUCT FOUND");
       }
     });
   }, [products, allProducts]);
 
   const handlePaymentGateway = () => {
+    const items = [];
+  
+    products.forEach((product) => {
+      if (product.promotion) {
+        // Si es una promoción, agregar cada producto dentro de ella al array de items
+        product.products.forEach((promoProduct) => {
+          items.push({
+            id: promoProduct.id,
+            name: promoProduct.name,
+            quantity: promoProduct.quantity,
+            size: promoProduct.size,
+            image: promoProduct.image,
+            price: promoProduct.price, // Puede ser 0 si aplica
+            color: promoProduct.color || null,
+            variant: promoProduct.variant || null, // Validar que exista la propiedad
+          });
+        });
+      } else {
+        // Si es un producto normal, agregarlo directamente al array de items
+        items.push({
+          id: product.id,
+          name: product.name,
+          quantity: product.quantity,
+          size: product.size,
+          image: product.image,
+          price: product.price,
+          color: product.color || null,
+          variant: product.variant || null, // Validar que exista la propiedad
+          dimensions: product.dimensions || null, // Opcional, si es requerido
+        });
+      }
+    });
+  // console.log(items);
+  
+  //   Navegar al gateway de pagos con los items procesados
     navigate(`/paymentgateway`, {
       state: {
-        item: products,
+        item: items,
         shippingCharge,
       },
     });
   };
+  
 
   let numberOfProducts = 0;
   if (products) {
@@ -95,13 +154,15 @@ const Cart = () => {
       numberOfProducts += product.quantity;
     }
   }
-
-
+console.log(products);
 
   return (
     <div className="flex flex-col max-w-container mx-auto px-3 lg:px-32 relative">
       <div className="absolute top-10 right-4 lg:right-24 flex items-center gap-3 w-[200px]">
-        <img className="w-10 rounded-md" src="https://d1zxmlch3z83cq.cloudfront.net/production/2.3.41/_next/server/static/img/safe-shopping.svg" />
+        <img
+          className="w-10 rounded-md"
+          src="https://d1zxmlch3z83cq.cloudfront.net/production/2.3.41/_next/server/static/img/safe-shopping.svg"
+        />
         <div className="flex flex-col">
           <p className="text-sm font-semibold">COMPRA SEGURA</p>
           <p className="text-sm"> 100% PROTEGIDA</p>
@@ -109,22 +170,50 @@ const Cart = () => {
       </div>
       <Breadcrumbs title="Tu Carrito" />
       {products.length > 0 ? (
-        <div className="flex flex-wrap lg:flex-col lg:flex-nowrap pb-20 ">
-          <div className="flex  gap-4 items-center">
+        <div className="flex flex-wrap lg:flex-col lg:flex-nowrap pb-20">
+          <div className="flex gap-4 items-center">
             <IoIosInformationCircleOutline className="text-4xl text-pink-500" />
             <p className="text-md text-left">
               Los artículos en tu carrito no están reservados. <br />
               Terminá el proceso de compra ahora para hacerte con ellos.
             </p>
           </div>
+
+          {/* Sección de Promociones */}
+          {promotions.length > 0 && promotions.map((promotion) =>
+            <div className="w-full mt-5">
+              <h2 className="text-xl font-semibold text-left mb-3">
+                {promotion.title}
+              </h2>
+              <div className="flex items-start py-4 px-4">
+                <RxCross2
+                  onClick={() =>
+                    dispatch(deleteItem({ id: promotion.id }))
+                  }
+                  className="text-primeColor text-xl hover:text-gray-500 duration-300 cursor-pointer"
+                />
+              </div>
+              <div className="flex flex-wrap gap-4 w-full">
+                {promotion.products?.map((item) => (
+                  <div key={item.id} className="w-full lg:w-1/3">
+                    <ItemCard item={item} promotion={true} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Productos normales */}
           <div className="flex flex-wrap lg:flex-nowrap justify-between items-start mt-5">
             <div className="w-full lg:w-1/2 flex flex-wrap justify-start items-start">
-              {products.map((item) => (
-                <div className="w-full" key={item._id}>
-                  <ItemCard item={item} /> 
+              {normalProducts.map((item) => (
+                <div className="w-full" key={item.id}>
+                  <ItemCard item={item} />
                 </div>
               ))}
             </div>
+
+            {/* Resumen del Pedido */}
             <div className="w-full lg:w-1/3 gap-4 flex">
               <div className="w-full flex flex-col gap-4">
                 <h1 className="text-2xl font-semibold text-left">
@@ -139,37 +228,23 @@ const Cart = () => {
                       ${formatPrice(totalAmt)}
                     </span>
                   </p>
-                  {/* <p className="flex items-center justify-between py-1.5 text-lg font-medium">
-                    Envio
-                    <span className="font-normal tracking-wide font-titleFont">
-                      {shippingCharge === 0
-                        ? "Gratis"
-                        : "Gratis"} */}
-                       {/* : `$${formatPrice(shippingCharge)}`} */}
-                    {/* </span>
-                  </p> */}
-                  <p className="flex items-center font-bold justify-between  py-1.5 text-lg ">
+                  <p className="flex items-center font-bold justify-between py-1.5 text-lg">
                     Total
                     <span className="font-bold tracking-wide text-lg font-titleFont">
                       $
                       {shippingCharge === "Gratis"
                         ? formatPrice(totalAmt)
-                        : formatPrice(totalAmt + shippingCharge)}(Sin Envio)
+                        : formatPrice(totalAmt + shippingCharge)}
+                      (Sin Envio)
                     </span>
                   </p>
-                  {/* <p className="">(IVA incluido ${ivaAmount})</p> */}
                 </div>
-                {/* <div>
-                  <Rate dimensions={item.dimensions} />
-                </div> */}
                 <div className="w-full flex justify-end">
                   <button
-                    className="w-full"
-                    onClick={() => handlePaymentGateway()}
+                    className="font-semibold w-full h-10 bg-[#fc148c] text-white hover:bg-[#a73771] hover:scale-105 duration-300"
+                    onClick={handlePaymentGateway}
                   >
-                    <button className="font-semibold w-full h-10 bg-[#fc148c] text-white hover:bg-[#a73771] hover:scale-105 duration-300">
-                      CONTINUAR COMPRA
-                    </button>
+                    CONTINUAR COMPRA
                   </button>
                 </div>
               </div>

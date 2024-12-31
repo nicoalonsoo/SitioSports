@@ -12,21 +12,45 @@ const Rate = ({ dimensions, detailPrice }) => {
   const [totalAmount, setTotalAmount] = useState(0);
 
   const cartProducts = useSelector((state) => state.orebiReducer.cartProducts);
+console.log(cartProducts);
 
-  const totalDimensions = cartProducts.reduce(
-    (acc, product) => ({
-      weight: acc.weight + product.dimensions.weight,
-      height: acc.height + product.dimensions.height,
-      width: acc.width + product.dimensions.width,
-      length: acc.length + product.dimensions.length,
-    }),
-    {
-      weight: dimensions.weight,
-      height: dimensions.height,
-      width: dimensions.width,
-      length: dimensions.length,
+const totalDimensions = cartProducts.reduce(
+  (acc, product) => {
+    // Si el producto es una promoción, iteramos sobre sus productos internos
+    if (product.promotion && Array.isArray(product.products)) {
+      const promoDimensions = product.products.reduce(
+        (promoAcc, promoProduct) => ({
+          weight: promoAcc.weight + (promoProduct.dimensions?.weight || 0),
+          height: promoAcc.height + (promoProduct.dimensions?.height || 0),
+          width: promoAcc.width + (promoProduct.dimensions?.width || 0),
+          length: promoAcc.length + (promoProduct.dimensions?.length || 0),
+        }),
+        { weight: 0, height: 0, width: 0, length: 0 }
+      );
+
+      return {
+        weight: acc.weight + promoDimensions.weight,
+        height: acc.height + promoDimensions.height,
+        width: acc.width + promoDimensions.width,
+        length: acc.length + promoDimensions.length,
+      };
     }
-  );
+
+    // Caso normal: sumar las dimensiones del producto fuera de promociones
+    return {
+      weight: acc.weight + (product.dimensions?.weight || 0),
+      height: acc.height + (product.dimensions?.height || 0),
+      width: acc.width + (product.dimensions?.width || 0),
+      length: acc.length + (product.dimensions?.length || 0),
+    };
+  },
+  {
+    weight: dimensions.weight,
+    height: dimensions.height,
+    width: dimensions.width,
+    length: dimensions.length,
+  }
+);
 
   const product = {
     customerId: "0001374226",
@@ -125,11 +149,11 @@ const Rate = ({ dimensions, detailPrice }) => {
         </p>
       </div>
 
-      <p className="text-sm text-gray-700 mt-2">
+      {/* <p className="text-sm text-gray-700 mt-2">
         {cartProducts.length > 0
           ? `Sumando este producto, el envío queda en: $${totalAmount.toLocaleString()}`
           : `Total: $${totalAmount.toLocaleString()}`}
-      </p>
+      </p> */}
 
       <div>
         <input

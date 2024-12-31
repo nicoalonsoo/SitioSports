@@ -28,6 +28,12 @@ const Admin = () => {
         >
           Gestionar Cupones
         </a>
+        <a
+          href="/promociones"
+          className="flex justify-center items-center p-[30px] border-[2px] border-[#e5e7eb] text-2xl hover:bg-[#fc148c] duration-300 hover:text-white"
+        >
+          Gestionar Promociones
+        </a>
       </div>
     </div>
   );

@@ -17,6 +17,15 @@ export const fetchProductBySlugFromBackend = async (slug) => {
   }
 };
 
+export const fetchPromotionBySlugFromBackend = async (slug) => {
+  try {
+    const response = await axios.get(`https://sitiosports-production.up.railway.app/promotion/${slug}`);
+    return response.data; 
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const fetchUsersFromBackend = async () => {
   try {
     const response = await axios.get("https://sitiosports-production.up.railway.app/users");
@@ -28,6 +37,14 @@ export const fetchUsersFromBackend = async () => {
 export const fetchDiscountsFromBackend = async () => {
   try {
     const response = await axios.get("https://sitiosports-production.up.railway.app/discounts");
+    return response.data; 
+  } catch (error) {
+    throw error;
+  }
+};
+export const fetchPromotionsFromBackend = async () => {
+  try {
+    const response = await axios.get("https://sitiosports-production.up.railway.app/promotion");
     return response.data; 
   } catch (error) {
     throw error;

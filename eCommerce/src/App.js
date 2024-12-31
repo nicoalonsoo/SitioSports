@@ -59,6 +59,8 @@ import NotFound from "./pages/NotFound/NotFound";
 import WhatsAppButton from "./components/Whatsapp/WhatsappButton";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import ArrowUpScroll from "./components/ArrowUpScroll/ArrowUpScroll";
+import PromotionsTable from "./pages/Promotions/PromotionsTable";
+import PromotionDetails from "./pages/ProductDetails/PromotionDetails";
 
 const Layout = () => {
   const location = useLocation();
@@ -165,6 +167,7 @@ const App = () => {
           {/* ==================== Header Navlink End here ===================== */}
           <Route path="/category/:category" element={<Offer />}></Route>
           <Route path="/producto/:slug" element={<ProductDetails />}></Route>
+          <Route path="/promocion/:slug" element={<PromotionDetails />}></Route>
           <Route path="/carrito" element={<Cart />}></Route>
           <Route path="/paymentgateway" element={<Payment />}></Route>
         </Route>
@@ -197,6 +200,7 @@ const App = () => {
         ></Route>
         <Route path="/uploadproduct" element={isAuthenticated ? <ProductForm /> : <Login />}></Route>
         <Route path="/discounts" element={isAuthenticated ? <DiscountsTable /> : <Login />}></Route>
+        <Route path="/promociones" element={isAuthenticated ? <PromotionsTable /> : <Login />}></Route>
         <Route path="/discounts-form" element={isAuthenticated ? <DiscountsForm /> : <Login />}></Route>
         <Route
           path="/cargar-producto-encargo"

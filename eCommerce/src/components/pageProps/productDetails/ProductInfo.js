@@ -319,7 +319,7 @@ const ProductInfo = ({
         </div>
 
         <div>
-          <Rate detailPrice={productInfo.price} dimensions={productInfo.dimensions}/>
+          <Rate detailPrice={productInfo.price} dimensions={productInfo?.dimensions ? productInfo?.dimensions : ""}/>
         </div>
 
         <div className="flex items-center justify-start gap-4">
