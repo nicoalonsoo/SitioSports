@@ -13,6 +13,11 @@ export const navBarList = [
     link: "/catalogo",
   },
   {
+    _id: 1010,
+    title: "Promociones",
+    link: "/catalogo?promociones=ss",
+  },
+  {
     _id: 1003,
     title: "Botines",
     link: "/catalogo",

@@ -101,6 +101,7 @@ const PromotionInfo = ({ productInfo }) => {
   const handleGiftSearch = (e) => setGiftSearchQuery(e.target.value);
 
   const handleOpenSearchBar = () => {
+    setFilteredProducts(promoProducts);
     setShowSearchBar(true);
     setShowGiftSearchBar(false);
     setGiftSearchQuery("");
@@ -110,6 +111,7 @@ const PromotionInfo = ({ productInfo }) => {
     setShowSearchBar(false);
   };
   const handleOpenGiftSearchBar = () => {
+    setFilteredGiftProducts(giftPromoProducts)
     setShowGiftSearchBar(true);
     setShowSearchBar(false);
     setSearchQuery("");
@@ -346,7 +348,7 @@ const PromotionInfo = ({ productInfo }) => {
             </button>
           )}
         </div>
-        {searchQuery && (
+        {showSearchBar && (
           <div className="absolute bg-white shadow-lg p-4 w-full max-h-96 overflow-y-auto z-50">
             {filteredProducts.map((item) => (
               <div
@@ -395,7 +397,7 @@ const PromotionInfo = ({ productInfo }) => {
               </button>
             )}
           </div>
-          {giftSearchQuery && (
+          {showGiftSearchBar && (
             <div className="absolute bg-white shadow-lg p-4 w-full max-h-96 overflow-y-auto">
               {filteredGiftProducts.map((item) => (
                 <div
@@ -480,7 +482,7 @@ const PromotionInfo = ({ productInfo }) => {
             </div>
           );
         })}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col w-full items-center gap-2">
           <button
             onClick={handleAddToCart}
             className={`bg-[#fc148c] flex justify-start text-white font-semibold py-3 px-4 lg:px-16 rounded-sm w-auto h-auto lg:h-full text-xl`}

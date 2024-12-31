@@ -61,7 +61,7 @@ const NewArrivals = () => {
   return (
     <div className="w-full pb-6 lg:pb-4 lg:pb-16 space-y-10 py-8">
       <h1 className="text-left text-2xl lg:text-4xl font-normal ">
-        Ofertas Noviembre
+        Ofertas Pre-temporada
       </h1>
       <Slider {...settings}>
         {newArrivalsProducts.map((product) => (
