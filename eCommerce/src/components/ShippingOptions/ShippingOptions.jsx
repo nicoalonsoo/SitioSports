@@ -45,26 +45,17 @@ const ShippingOptions = ({
     let maxWidth = 0;
     let maxLength = 0;
     let totalHeight = 0;
-  
-    const calculateProductDimensions = (productList) => {
-      productList.forEach((product) => {
-        if (product.type === "promotion" && Array.isArray(product.products)) {
-          // Si es una promoción, calcular dimensiones de los productos internos
-          calculateProductDimensions(product.products);
-        } else {
-          const { weight, width, length, height } = product.dimensions || {};
-          const quantity = product.quantity || 1;
-  
-          totalWeight += (weight || 0) * quantity;
-          maxWidth = Math.max(maxWidth, width || 0);
-          maxLength = Math.max(maxLength, length || 0);
-          totalHeight += (height || 0) * quantity;
-        }
-      });
-    };
-  
-    calculateProductDimensions(products);
-  
+
+    products.forEach((product) => {
+      const { weight, width, length, height } = product.dimensions;
+      const quantity = product.quantity || 1;
+
+      totalWeight += weight * quantity;
+      maxWidth = Math.max(maxWidth, width);
+      maxLength = Math.max(maxLength, length);
+      totalHeight += height * quantity;
+    });
+
     return {
       weight: totalWeight,
       width: maxWidth,
@@ -72,10 +63,29 @@ const ShippingOptions = ({
       height: totalHeight,
     };
   };
+  const normalizeProducts = (products) => {
+    return products.flatMap((product) => {
+      if (product.promotion && product.products) {
+        // Si el producto es una promoción, devuelve los productos internos
+        return product.products.map((promoProduct) => ({
+          ...promoProduct, // Copiar propiedades del producto interno
+          quantity: promoProduct.quantity * product.quantity, // Ajustar la cantidad si aplica
+        }));
+      } else {
+        // Si no es promoción, devuélvelo tal cual
+        return product;
+      }
+    });
+  };
   
-  const dimensions = calculateDimensions(products);
-  
+  // Usar la función con tu array de productos
+  const normalizedProducts = normalizeProducts(products);
 
+  
+  // Ahora puedes calcular las dimensiones con normalizedProducts
+  const dimensions = calculateDimensions(normalizedProducts);
+
+  
   const product = {
     customerId: "0001374226",
     postalCodeOrigin: "4107",

@@ -59,7 +59,7 @@ const PaymentMethods = () => {
       <div className="flex items-center gap-1">
         <img width={32} src={shipping} alt="Envío gratis" />
         <p>
-          <span className="text-[#fc148c] font-bold">Envío Gratis</span> a todo el país.
+          <span className="text-[#fc148c] font-bold">Envíos</span> a todo el país.
         </p>
       </div>
     </div>

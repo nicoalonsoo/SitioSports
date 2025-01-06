@@ -47,6 +47,7 @@ const Payment = () => {
         product.products.forEach((promoProduct) => {
           items.push({
             id: promoProduct.id,
+            dimensions: promoProduct.dimensions,
             name: promoProduct.name,
             quantity: promoProduct.quantity,
             size: promoProduct.size,
@@ -97,16 +98,11 @@ const Payment = () => {
       currency: "ARS", // Moneda
     });
   }, [location]);
-  console.log(productInfo, "Product");
   useEffect(() => {
     let price = 0;
     if (productInfo !== "") {
       productInfo?.map((item) => {
         price += item.price * item.quantity;
-       
-        console.log(price, "prices");
-        
-        
         return price;
       });
       setTotalAmt(price);
@@ -369,7 +365,7 @@ const Payment = () => {
                         ({product.size}) x{product.quantity}
                       </span>
                     </p>
-                    <p>${product.price} c/u</p>
+                    <p>${formatPrice(product.price)} c/u</p>
                   </div>
                 </div>
               ))}
@@ -712,7 +708,7 @@ const Payment = () => {
                       ({product.size}) x{product.quantity}
                     </span>
                   </p>
-                  <p>${product.price} c/u</p>
+                  <p>${formatPrice(product.price)} c/u</p>
                 </div>
               </div>
             ))}

@@ -5,14 +5,14 @@ import BestSellers from "../../components/home/BestSellers/BestSellers";
 import NewArrivals from "../../components/home/NewArrivals/NewArrivals";
 import Sale from "../../components/home/Sale/Sale";
 import SpecialOffers from "../../components/home/SpecialOffers/SpecialOffers";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchProductsFromBackend, fetchPromotionsFromBackend } from "../../utils/api";
 import { setBackendProducts, setBackendPromotions } from "../../redux/orebiSlice";
 
 const Home = () => {
-  const products = useSelector((state) => state.orebiReducer.products);
-  const promotions = useSelector((state) => state.orebiReducer.promotions);
-  console.log(promotions);
+  // const products = useSelector((state) => state.orebiReducer.products);
+  // const promotions = useSelector((state) => state.orebiReducer.promotions);
+
   
   const dispatch = useDispatch();
   useEffect(() => {

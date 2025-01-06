@@ -6,7 +6,9 @@ import { motion } from "framer-motion";
 import thumbnailConvert from "../../../utils/convertThumbnail";
 import Sizes from "../../Sizes/Sizes";
 import { addToCart } from "../../../redux/orebiSlice";
-
+import formatPrice from "../../../utils/formatPrice";
+import PaymentMethods from "./PaymentMethods";
+import { FaLock } from "react-icons/fa";
 const sizesBotines = [
   { _id: 9001, title: "39" },
   { _id: 9003, title: "40" },
@@ -111,7 +113,7 @@ const PromotionInfo = ({ productInfo }) => {
     setShowSearchBar(false);
   };
   const handleOpenGiftSearchBar = () => {
-    setFilteredGiftProducts(giftPromoProducts)
+    setFilteredGiftProducts(giftPromoProducts);
     setShowGiftSearchBar(true);
     setShowSearchBar(false);
     setSearchQuery("");
@@ -144,31 +146,31 @@ const PromotionInfo = ({ productInfo }) => {
         : productInfo.type === "Regalo"
         ? 2
         : Infinity;
-  
+
     // Si el tipo es "Regalo", verificamos si ya se agregaron productos normales y de regalo
     if (productInfo.type === "Regalo") {
       const hasNormalProduct = selectedProducts.some((item) => !item.isGift);
       const hasGiftProduct = selectedProducts.some((item) => item.isGift);
-  
+
       if (hasNormalProduct && hasGiftProduct) {
         alert(
           "Para esta promoción, solo puedes agregar un producto normal y un producto de regalo."
         );
         return;
       }
-  
+
       // Validación específica según la propiedad isGift
       if (product.isGift && hasGiftProduct) {
         alert("Ya has seleccionado un producto de regalo.");
         return;
       }
-  
+
       if (!product.isGift && hasNormalProduct) {
         alert("Ya has seleccionado un producto normal.");
         return;
       }
     }
-  
+
     // Lógica estándar para cualquier tipo de promoción
     if (selectedProducts.length >= maxProducts) {
       alert(
@@ -176,28 +178,27 @@ const PromotionInfo = ({ productInfo }) => {
       );
       return;
     }
-  
+
     // Selecciona la primera variante como `selectedVariant` si no está ya definida
     const firstVariant =
       product.variants && product.variants.length > 0
         ? product.variants[0]
         : null;
-  
+
     const productToAdd = {
       ...product,
       selectedVariant: firstVariant, // Asigna la primera variante
       selectedSize: "", // Inicializa el tamaño como vacío
     };
-  
+
     setShowSearchBar(false);
     setSearchQuery("");
     setShowGiftSearchBar(false);
     setGiftSearchQuery("");
-  
+
     // Agrega el producto al estado
     setSelectedProducts((prev) => [...prev, productToAdd]);
   };
-  
 
   const handleVariantChange = (index, variant) => {
     setSelectedProducts((prev) =>
@@ -225,7 +226,7 @@ const PromotionInfo = ({ productInfo }) => {
     ].selectedVariant.sizes.find((item) => item.size === size);
 
     if (selectedSizeObject) {
-      alert(`Stock disponible: ${selectedSizeObject.stock}`);
+      // alert(`Stock disponible: ${selectedSizeObject.stock}`);
     } else {
       alert("Tamaño no disponible.");
     }
@@ -234,49 +235,65 @@ const PromotionInfo = ({ productInfo }) => {
   const handleAddToCart = () => {
     const requiredProducts =
       productInfo.type === "2x1" ? 2 : productInfo.type === "3x2" ? 3 : 0;
-  
+
     if (requiredProducts > 0 && selectedProducts.length !== requiredProducts) {
       alert(
         `Para esta promoción (${productInfo.type}), debes seleccionar exactamente ${requiredProducts} productos.`
       );
       return;
     }
-  
+
     const productsWithoutSize = selectedProducts.filter(
       (product) => !product.selectedSize
     );
-  
+
     if (productsWithoutSize.length > 0) {
       alert("Todos los productos seleccionados deben tener un talle.");
       return;
     }
-  
+
+    // Ordena los productos de mayor a menor precio
     const sortedProducts = [...selectedProducts].sort(
-      (a, b) => b.price - a.price
+      (a, b) => parseFloat(b.price) - parseFloat(a.price)
     );
-  
+
+    // Actualiza los precios según la promoción
     const updatedProducts = sortedProducts.map((product, index) => {
       if (productInfo.type === "2x1" && index === 1) {
         return { ...product, price: 0 };
       }
-  
+
       if (productInfo.type === "3x2" && index === 2) {
         return { ...product, price: 0 };
       }
-  
-      // Si el tipo es "Regalo", el producto con `isGift` debe tener precio 0
+
       if (productInfo.type === "Regalo" && product.isGift) {
         return { ...product, price: 0 };
       }
-  
+
       return product;
     });
-  
+
+    // Calcular el monto descontado (discountAmount)
+    const discountAmount = updatedProducts
+      .filter((product) => product.price === 0)
+      .reduce(
+        (acc, product) =>
+          acc +
+          parseFloat(sortedProducts.find((p) => p.id === product.id).price),
+        0
+      );
+
+    // Calcula el precio total sumando solo los precios de los productos que no son gratuitos
+    const totalPrice = updatedProducts
+      .filter((product) => product.price > 0)
+      .reduce((acc, product) => acc + parseFloat(product.price), 0);
+
     const cartProducts = updatedProducts.map((product) => {
       const sizeInfo = product.selectedVariant?.sizes?.find(
         (size) => size.size === product.selectedSize
       );
-  
+
       return {
         id: product.id,
         name: product.productName,
@@ -291,28 +308,25 @@ const PromotionInfo = ({ productInfo }) => {
         dimensions: product.dimensions,
       };
     });
-  
-    const totalPrice = updatedProducts.reduce(
-      (acc, product) => acc + product.price,
-      0
-    );
-  
+
     dispatch(
       addToCart({
         id: productInfo.id,
-        price: totalPrice,
+        price: totalPrice.toFixed(2), // Asegúrate de que el precio tenga dos decimales
         quantity: 1,
         title: productInfo.title,
         description: productInfo.description,
         type: productInfo.type,
+        disabled: productInfo.disabled,
+        endDate: productInfo.endDate,
         promotion: true,
+        discountAmount: discountAmount.toFixed(2), // Monto del descuento
         products: cartProducts,
       })
     );
-  
-    alert("Productos añadidos al carrito.");
+
+    // alert("Productos añadidos al carrito.");
   };
-  
 
   return (
     <div className="flex flex-col items-start gap-4 lg:w-[40%]">
@@ -322,7 +336,7 @@ const PromotionInfo = ({ productInfo }) => {
       <p className="text-gray-700">
         {productInfo.description ? productInfo.description : ""}
       </p>
-
+      <PaymentMethods />
       {/* Barra de búsqueda para productos promocionales */}
       <div className="relative w-full">
         <h2 className="text-xl font-semibold">Selecciona el Producto</h2>
@@ -344,7 +358,7 @@ const PromotionInfo = ({ productInfo }) => {
             </>
           ) : (
             <button onClick={handleOpenSearchBar}>
-              <FaSearch className="w-5 h-5" />
+              <FaSearch className="w-5 h-5 text-pink-600" />
             </button>
           )}
         </div>
@@ -363,7 +377,7 @@ const PromotionInfo = ({ productInfo }) => {
                 />
                 <div>
                   <p className="font-bold">{item.productName}</p>
-                  <p className="text-primeColor">${item.price}</p>
+                  <p className="text-primeColor">${formatPrice(item.price)}</p>
                 </div>
               </div>
             ))}
@@ -393,7 +407,7 @@ const PromotionInfo = ({ productInfo }) => {
               </>
             ) : (
               <button onClick={handleOpenGiftSearchBar}>
-                <FaSearch className="w-5 h-5" />
+                <FaSearch className="w-5 h-5 text-pink-600" />
               </button>
             )}
           </div>
@@ -412,7 +426,9 @@ const PromotionInfo = ({ productInfo }) => {
                   />
                   <div>
                     <p className="font-bold">{item.productName}</p>
-                    <p className="text-primeColor">${item.price}</p>
+                    <p className="text-primeColor">
+                      ${formatPrice(item.price)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -423,7 +439,7 @@ const PromotionInfo = ({ productInfo }) => {
 
       <div className="w-full">
         {selectedProducts.length > 0 ? (
-          <h2 className="text-xl font-semibold">Productos Seleccionados:</h2>
+          <h2 className="text-xl font-regular">Productos Seleccionados:</h2>
         ) : (
           ""
         )}
@@ -434,7 +450,10 @@ const PromotionInfo = ({ productInfo }) => {
             .map((size) => size.size);
 
           return (
-            <div key={index} className="flex flex-col gap-2 p-2 border rounded w-full">
+            <div
+              key={index}
+              className="flex flex-col gap-2 p-2 border rounded w-full"
+            >
               <p className="font-semibold">{product.productName}</p>
               <div className="flex gap-2 w-full">
                 {product.variants?.map((variant) => (
@@ -474,7 +493,7 @@ const PromotionInfo = ({ productInfo }) => {
               />
 
               <button
-                className="text-red-500"
+                className="text-pink-500 hover:bg-gray-100 duration-200"
                 onClick={() => handleRemoveProductFromPromotion(index)}
               >
                 Quitar
@@ -482,13 +501,22 @@ const PromotionInfo = ({ productInfo }) => {
             </div>
           );
         })}
-        <div className="flex flex-col w-full items-center gap-2">
+        <div className="flex  w-full justify-start items-center gap-2 pt-4">
           <button
             onClick={handleAddToCart}
-            className={`bg-[#fc148c] flex justify-start text-white font-semibold py-3 px-4 lg:px-16 rounded-sm w-auto h-auto lg:h-full text-xl`}
+            className={`bg-[#fc148c] hover:bg-[#cd3a86] duration-300 flex justify-start text-white font-semibold py-3 px-4 lg:px-16 rounded-sm w-auto h-auto lg:h-full text-xl`}
           >
             Agregar al Carrito
           </button>
+        </div>
+        <div className="flex items-center justify-start gap-4 mt-2">
+          <FaLock className="text-2xl" />
+          <div className="flex flex-col">
+            <p className="font-semibold">Compra Protegida</p>
+            <p className="text-sm">
+              Tus datos cuidados durante toda la compra.
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -106,7 +106,7 @@ const HeaderBottom = ({handleSearchBar}) => {
                 <div
                   onClick={() =>
                     navigate(
-                      `/producto/${item.productName
+                      `/producto/${item.slug
                         .toLowerCase()
                         .split(" ")
                         .join("")}`,

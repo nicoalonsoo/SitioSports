@@ -9,7 +9,7 @@ const ShippingOptions = ({
   products,
   handleClickShippingType,
   state,
-  totalAmt
+  totalAmt,
 }) => {
   const [cp, setCp] = useState("");
   const [rates, setRates] = useState([]);
@@ -63,9 +63,29 @@ const ShippingOptions = ({
       height: totalHeight,
     };
   };
+  const normalizeProducts = (products) => {
+    return products.flatMap((product) => {
+      if (product.promotion && product.products) {
+        // Si el producto es una promoción, devuelve los productos internos
+        return product.products.map((promoProduct) => ({
+          ...promoProduct, // Copiar propiedades del producto interno
+          quantity: promoProduct.quantity * product.quantity, // Ajustar la cantidad si aplica
+        }));
+      } else {
+        // Si no es promoción, devuélvelo tal cual
+        return product;
+      }
+    });
+  };
+  
+  // Usar la función con tu array de productos
+  const normalizedProducts = normalizeProducts(products);
 
-  const dimensions = calculateDimensions(products);
+  
+  // Ahora puedes calcular las dimensiones con normalizedProducts
+  const dimensions = calculateDimensions(normalizedProducts);
 
+  
   const product = {
     customerId: "0001374226",
     postalCodeOrigin: "4107",
@@ -90,46 +110,37 @@ const ShippingOptions = ({
       return newToken;
     }
   };
-
   const handleCalculateRate = async (postalCode = cp) => {
     try {
       setIsLoading(true);
       localStorage.setItem("postalCode", postalCode);
-      const token = await getToken();
 
-      const responses = await Promise.all([
-        axios.post(
-          "https://api.correoargentino.com.ar/micorreo/v1/rates",
-          { ...product, postalCodeDestination: postalCode, deliveredType: "D" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        ),
-        axios.post(
-          "https://api.correoargentino.com.ar/micorreo/v1/rates",
-          { ...product, postalCodeDestination: postalCode, deliveredType: "S" },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        ),
-      ]);
+      // Solicitud a tu backend
+      const response = await axios.post(
+        "https://sitiosports-production.up.railway.app/rates",
+        {
+          dimensions: product.dimensions,
+          postalCodeDestination: postalCode,
+          token: await getToken(),
+        }
+      );
 
+      // Filtrar solo los productos "Clasico" y ajustar tarifas de sucursal
       const combinedRates = [
-        { type: "Domicilio", rates: responses[0].data.rates.filter(rate => rate.productName.includes(" ")) },
-        { 
-          type: "Sucursal", 
-          rates: responses[1].data.rates
-            .filter(rate => rate.productName.includes("Clasico"))
-            .map(rate => ({
+        {
+          type: "Domicilio",
+          rates: response.data.domicilio.filter((rate) =>
+            rate.productName.includes("Clasico")
+          ),
+        },
+        {
+          type: "Sucursal",
+          rates: response.data.sucursal
+            .filter((rate) => rate.productName.includes("Clasico"))
+            .map((rate) => ({
               ...rate,
-              price: totalAmt > 35000 ? 0 : rate.price
-            }))
+              price: totalAmt > 35000 ? 0 : rate.price, // Ajustar tarifas según monto total
+            })),
         },
       ];
 
@@ -145,22 +156,33 @@ const ShippingOptions = ({
 
   const fetchNearbyAgencies = async (provinceCode) => {
     try {
-      const token = await getToken();
-      const response = await axios.get(
-        `https://api.correoargentino.com.ar/micorreo/v1/agencies?customerId=0000550997&provinceCode=${provinceCode}`,
+      setIsLoading(true);
+      const response = await axios.post(
+        "https://sitiosports-production.up.railway.app/agencies",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          provinceCode: provinceCode,
+          token: await getToken(),
         }
       );
-      const agencies = response.data.filter((agency) =>
-        agency.nearByPostalCode?.split(",").includes(cp)
+  
+      const agencies = response.data.agencies.filter((agency) =>
+        agency.location.address.postalCode?.startsWith(`${provinceCode}${cp}`)
       );
+  
+      if (agencies.length === 0) {
+        setError(
+          "No se encontraron sucursales para la combinación de provincia y código postal ingresados. Por favor, verifica los datos que ingresaste e inténtalo de nuevo."
+        );
+      } else {
+        setError("");
+      }
+  
       setNearbyAgencies(agencies);
     } catch (error) {
-      console.error("Error fetching agencies:", error);
+      console.error("Error al obtener agencias:", error);
       setError("Hubo un error al obtener las agencias. Inténtalo de nuevo.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -180,7 +202,7 @@ const ShippingOptions = ({
   const handleSelectAgencyRate = (rate) => {
     const rateWithAgencyAddress = {
       ...rate,
-      agencyAddress: selectedAgency
+      agencyAddress: selectedAgency,
     };
     setSelectedAgencyRate(rate);
     setSelectedRate(rate);
@@ -212,6 +234,14 @@ const ShippingOptions = ({
           </span>
         </p>
       </div>
+      <a
+        className="text-xs hover:text-[#fc148c] underline"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.correoargentino.com.ar/formularios/cpa"
+      >
+        No sé mi código postal
+      </a>
 
       {error && <p className="text-red-500">{error}</p>}
 
@@ -241,14 +271,18 @@ const ShippingOptions = ({
                   >
                     <div>
                       <h1 className="text-lg font-bold">{rate.productName}</h1>
-                      <h1 className="text-lg text-gray-600">Envío a Domicilio</h1>
+                      <h1 className="text-lg text-gray-600">
+                        Envío a Domicilio
+                      </h1>
                       <h1 className="text-md font-semibold text-gray-700">
                         {rate.deliveryTimeMin} - {rate.deliveryTimeMax} días
                         hábiles
                       </h1>
                     </div>
                     <div>
-                      {rate.price === 0 ? "Gratis" : `$${rate.price.toLocaleString()}`}
+                      {rate.price === 0
+                        ? "Gratis"
+                        : `$${rate.price.toLocaleString()}`}
                     </div>
                   </div>
                 ))
@@ -262,14 +296,16 @@ const ShippingOptions = ({
                   >
                     <option value="">Elige una sucursal...</option>
                     {nearbyAgencies.map((agency, index) => (
-                      <option key={index} value={` ${agency.name} - ${agency.location.address.streetName}, ${agency.location.address.streetNumber}, ${agency.location.address.locality}`}>
+                      <option
+                        key={index}
+                        value={` ${agency.name} - ${agency.location.address.streetName}, ${agency.location.address.streetNumber}, ${agency.location.address.locality}`}
+                      >
                         {agency.name} - {agency.location.address.streetName}{" "}
                         {agency.location.address.streetNumber},{" "}
                         {agency.location.address.locality}
                       </option>
                     ))}
                   </select>
-
                   {selectedAgency && (
                     <div className="mt-4">
                       {rateCategory.rates.map((rate, index) => (
@@ -283,14 +319,18 @@ const ShippingOptions = ({
                           onClick={() => handleSelectAgencyRate(rate)}
                         >
                           <div>
-                            <h1 className="text-lg font-bold">{rate.productName}</h1>
+                            <h1 className="text-lg font-bold">
+                              {rate.productName}
+                            </h1>
                             <h1 className="text-md font-semibold text-gray-700">
-                              {rate.deliveryTimeMin} - {rate.deliveryTimeMax} días
-                              hábiles
+                              {rate.deliveryTimeMin} - {rate.deliveryTimeMax}{" "}
+                              días hábiles
                             </h1>
                           </div>
                           <div>
-                            {rate.price === 0 ? "Gratis" : `$${rate.price.toLocaleString()}`}
+                            {rate.price === 0
+                              ? "Gratis"
+                              : `$${rate.price.toLocaleString()}`}
                           </div>
                         </div>
                       ))}

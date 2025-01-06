@@ -46,7 +46,6 @@ const PromotionDetails = () => {
   const [images, setImages] = useState("");
 
   const product = useSelector((state) => state.orebiReducer.idPromotion);
-  console.log(product);
 
   useEffect(() => {
     if (product && !isLoading) {
