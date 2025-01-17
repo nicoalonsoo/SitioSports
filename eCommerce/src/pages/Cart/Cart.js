@@ -315,7 +315,6 @@ const Cart = () => {
                       {shippingCharge === "Gratis"
                         ? formatPrice(totalAmt)
                         : formatPrice(totalAmt + shippingCharge)}
-                      (Sin Envio)
                     </span>
                   </p>
                 </div>
