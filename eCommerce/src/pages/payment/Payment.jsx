@@ -11,10 +11,12 @@ import ContactForm from "../../components/PayerForm/ContactForm";
 import { tarjetas, otherPaymentMethods } from "../../constants/index";
 import ShippingOptions from "../../components/ShippingOptions/ShippingOptions";
 const Payment = () => {
+
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const products = useSelector((state) => state.orebiReducer.cartProducts);
+  const cartProducts = useSelector((state) => state.orebiReducer.cartProducts);
+  const [products, setProducts] = useState([]);
   const [resume, setResume] = useState(false);
   const [email, setEmail] = useState("");
   const [contactReady, setContactReady] = useState(false);
@@ -35,6 +37,45 @@ const Payment = () => {
     payerInfo: "",
     shipment: "",
   });
+
+  useEffect(() => {
+    const items = [];
+  
+    cartProducts.forEach((product) => {
+      if (product.promotion) {
+        // Si es una promoción, agregar cada producto dentro de ella al array de items
+        product.products.forEach((promoProduct) => {
+          items.push({
+            id: promoProduct.id,
+            dimensions: promoProduct.dimensions,
+            name: promoProduct.name,
+            quantity: promoProduct.quantity,
+            size: promoProduct.size,
+            image: promoProduct.image,
+            price: promoProduct.price, // Puede ser 0 si aplica
+            color: promoProduct.color || null,
+            variant: promoProduct.variant || null, // Validar que exista la propiedad
+          });
+        });
+      } else {
+        // Si es un producto normal, agregarlo directamente al array de items
+        items.push({
+          id: product.id,
+          name: product.name,
+          quantity: product.quantity,
+          size: product.size,
+          image: product.image,
+          price: product.price,
+          color: product.color || null,
+          variant: product.variant || null, // Validar que exista la propiedad
+          dimensions: product.dimensions || null, // Opcional, si es requerido
+        });
+      }
+    });
+    setProducts(items)
+ 
+    
+  }, [cartProducts]);
 
   // Estado para el cupón de descuento
   const [couponCode, setCouponCode] = useState("");
@@ -57,7 +98,6 @@ const Payment = () => {
       currency: "ARS", // Moneda
     });
   }, [location]);
-
   useEffect(() => {
     let price = 0;
     if (productInfo !== "") {
@@ -118,70 +158,69 @@ const Payment = () => {
     // }));
   }, [totalAmt, shippmentCharge]);
 
-console.log(order);
 
   const handlePay = async () => {
-    if (paymentMethod === "mp") {
-      try {
-        setProcessing(true);
-        const response = await axios.post(
-          "https://sitiosports-production.up.railway.app/create-order",
-          order
-        );
-        const preferenceId = response.data.id;
-        const redirectUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${preferenceId}`;
-        dispatch(resetCart());
-        window.location.href = redirectUrl;
-        setProcessing(false);
-      } catch (error) {
-        console.error("Error creating order:", error);
-        setProcessing(false);
-      }
-    } else {
-      try {
-        setProcessing(true);
-        const postOrder = {
-          items: productInfo,
-          name: order.payerInfo.payerName,
-          email: order.payerInfo.email,
-          client_id: order.payerInfo.client_id,
-          phone: order.payerInfo.phone,
-          shipment: {
-            zipCode: order.payerInfo.zipCode,
-            state_name: order.payerInfo.state,
-            city_name: order.payerInfo.city,
-            street_name: order.payerInfo.street,
-            street_number: order.payerInfo.streetNumber,
-            floor: order.payerInfo.floor,
-            aclaration: order.payerInfo.aclaration,
-            rate: shipping,
-          },
-          order_type: "Transferencia Bancaria",
-          status: "Pago Pendiente",
-          status_detail: "Cliente debe realizar la transferencia",
-          transaction_amount: shipmentPlusTotal,
-          shipping_amount: shippmentCharge,
-          transaction_details: {
-            net_received_amount: shipmentPlusTotal,
-            total_paid_amount: totalAmt,
-          },
-          shipping_type: shipping,
-        };
-        const responsePost = await axios.post(
-          "https://sitiosports-production.up.railway.app/order",
-          postOrder
-        );
-        const order_number = responsePost.data.order_number;
-        navigate(
-          `/orden-transferencia-confirmada/${order_number}?monto=${shipmentPlusTotal}`
-        );
-        dispatch(resetCart());
-        setProcessing(false);
-      } catch (error) {
-        console.error("Error creating order:", error);
-        setProcessing(false);
-      }
-    }
+    // if (paymentMethod === "mp") {
+    //   try {
+    //     setProcessing(true);
+    //     const response = await axios.post(
+    //       "https://sitiosports-production.up.railway.app/create-order",
+    //       order
+    //     );
+    //     const preferenceId = response.data.id;
+    //     const redirectUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${preferenceId}`;
+    //     dispatch(resetCart());
+    //     window.location.href = redirectUrl;
+    //     setProcessing(false);
+    //   } catch (error) {
+    //     console.error("Error creating order:", error);
+    //     setProcessing(false);
+    //   }
+    // } else {
+    //   try {
+    //     setProcessing(true);
+    //     const postOrder = {
+    //       items: productInfo,
+    //       name: order.payerInfo.payerName,
+    //       email: order.payerInfo.email,
+    //       client_id: order.payerInfo.client_id,
+    //       phone: order.payerInfo.phone,
+    //       shipment: {
+    //         zipCode: order.payerInfo.zipCode,
+    //         state_name: order.payerInfo.state,
+    //         city_name: order.payerInfo.city,
+    //         street_name: order.payerInfo.street,
+    //         street_number: order.payerInfo.streetNumber,
+    //         floor: order.payerInfo.floor,
+    //         aclaration: order.payerInfo.aclaration,
+    //         rate: shipping,
+    //       },
+    //       order_type: "Transferencia Bancaria",
+    //       status: "Pago Pendiente",
+    //       status_detail: "Cliente debe realizar la transferencia",
+    //       transaction_amount: shipmentPlusTotal,
+    //       shipping_amount: shippmentCharge,
+    //       transaction_details: {
+    //         net_received_amount: shipmentPlusTotal,
+    //         total_paid_amount: totalAmt,
+    //       },
+    //       shipping_type: shipping,
+    //     };
+    //     const responsePost = await axios.post(
+    //       "https://sitiosports-production.up.railway.app/order",
+    //       postOrder
+    //     );
+    //     const order_number = responsePost.data.order_number;
+    //     navigate(
+    //       `/orden-transferencia-confirmada/${order_number}?monto=${shipmentPlusTotal}`
+    //     );
+    //     dispatch(resetCart());
+    //     setProcessing(false);
+    //   } catch (error) {
+    //     console.error("Error creating order:", error);
+    //     setProcessing(false);
+    //   }
+    // }
   };
 
 
@@ -294,7 +333,7 @@ console.log(order);
               : "Ver Detalle de Compra"}
           </div>
           <span className="font-bold tracking-wide text-xl text-[#fc148c]">
-            ${shipmentPlusTotal}
+            ${formatPrice(shipmentPlusTotal)}
           </span>
         </button>
         <motion.div
@@ -326,7 +365,7 @@ console.log(order);
                         ({product.size}) x{product.quantity}
                       </span>
                     </p>
-                    <p>${product.price} c/u</p>
+                    <p>${formatPrice(product.price)} c/u</p>
                   </div>
                 </div>
               ))}
@@ -669,7 +708,7 @@ console.log(order);
                       ({product.size}) x{product.quantity}
                     </span>
                   </p>
-                  <p>${product.price} c/u</p>
+                  <p>${formatPrice(product.price)} c/u</p>
                 </div>
               </div>
             ))}

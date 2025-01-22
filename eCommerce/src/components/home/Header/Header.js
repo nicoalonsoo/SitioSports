@@ -138,7 +138,7 @@ const Header = () => {
                 <div className="relative">
                   <NavLink
                     key={1002}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/catalogo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={() => {
@@ -155,7 +155,7 @@ const Header = () => {
                 >
                   <NavLink
                     key={1003}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/catalogo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={() => {
@@ -185,7 +185,7 @@ const Header = () => {
                 >
                   <NavLink
                     key={1004}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/catalogo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={() => {
@@ -215,7 +215,7 @@ const Header = () => {
                 >
                   <NavLink
                     key={1005}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center mx-4 text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center mx-4 text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/catalogo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={() => {
@@ -247,7 +247,7 @@ const Header = () => {
                 >
                   <NavLink
                     key={1006}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/catalogo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={() => {
@@ -270,22 +270,34 @@ const Header = () => {
                   </div>
                 </div>
 
-                <div className="relative">
+                {/* <div className="relative">
                   <NavLink
                     key={1007}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/encargo"}
                     state={{ data: location.pathname.split("/")[1] }}
                     onClick={handleCommissionClick}
                   >
                     <li>Encargo</li>
                   </NavLink>
+                </div> */}
+
+                <div className="relative">
+                  <NavLink
+                    key={1008}
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    to={"/catalogo?promociones=ss"}
+                    state={{ data: location.pathname.split("/")[1] }}
+                    onClick={handleCommissionClick}
+                  >
+                    <li>Promociones</li>
+                  </NavLink>
                 </div>
 
                 <div className="relative">
                   <NavLink
                     key={1009}
-                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-base text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
+                    className="flex font-normal hover:font-bold w-20 h-6 justify-center items-center  text-sm lg:text-sm text-[#767676] hover:underline underline-offset-[4px] decoration-[1px] hover:text-[#fc148c] hoverEffect"
                     to={"/ayuda"}
                     state={{ data: location.pathname.split("/")[1] }}
                   >
@@ -317,9 +329,7 @@ const Header = () => {
                           <NavLink
                             to={item.link}
                             state={{ data: location.pathname.split("/")[1] }}
-                            onClick={
-                           
-                              () => handleNavMobile(item)}
+                            onClick={() => handleNavMobile(item)}
                           >
                             {item.title}
                           </NavLink>

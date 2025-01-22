@@ -63,9 +63,29 @@ const ShippingOptions = ({
       height: totalHeight,
     };
   };
+  const normalizeProducts = (products) => {
+    return products.flatMap((product) => {
+      if (product.promotion && product.products) {
+        // Si el producto es una promoción, devuelve los productos internos
+        return product.products.map((promoProduct) => ({
+          ...promoProduct, // Copiar propiedades del producto interno
+          quantity: promoProduct.quantity * product.quantity, // Ajustar la cantidad si aplica
+        }));
+      } else {
+        // Si no es promoción, devuélvelo tal cual
+        return product;
+      }
+    });
+  };
+  
+  // Usar la función con tu array de productos
+  const normalizedProducts = normalizeProducts(products);
 
-  const dimensions = calculateDimensions(products);
+  
+  // Ahora puedes calcular las dimensiones con normalizedProducts
+  const dimensions = calculateDimensions(normalizedProducts);
 
+  
   const product = {
     customerId: "0001374226",
     postalCodeOrigin: "4107",

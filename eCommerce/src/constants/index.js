@@ -13,6 +13,11 @@ export const navBarList = [
     link: "/catalogo",
   },
   {
+    _id: 1010,
+    title: "Promociones",
+    link: "/catalogo?promociones=ss",
+  },
+  {
     _id: 1003,
     title: "Botines",
     link: "/catalogo",
@@ -226,6 +231,21 @@ export const allTags = [
   {
     _id: 2001,
     title: "Urbano",
+  },
+];
+
+export const promotionTypes = [
+  {
+    _id: 600,
+    title: "2x1",
+  },
+  {
+    _id: 601,
+    title: "3x2",
+  },
+  {
+    _id: 602,
+    title: "Regalo",
   },
 ];
 

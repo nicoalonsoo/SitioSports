@@ -47,7 +47,8 @@ const Shop = () => {
             itemsPerPageFromBanner={itemsPerPageFromBanner}
             handleSort={handleSort}
           />
-          <Pagination
+          <Pagination 
+          promotions={true}
             itemsPerPage={itemsPerPage}
             sort={sort}
             searchTag={searchTag}
