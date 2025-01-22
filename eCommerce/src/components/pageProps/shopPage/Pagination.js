@@ -141,15 +141,19 @@ function Items({
 }
 
 function ItemsPromotions({ items, currentItems, promotions }) {
-  console.log(items);
-
   return (
     <>
       {items.length === 0 ? (
-        <div className="w-full">
+        <div className="w-1/2">
           <h1 className="text-center text-gray-800 font-semibold text-lg lg:text-xl px-0">
-            Tus parámetros de búsqueda no concuerdan con ninguno de nuestros
-            productos, ¡sigue buscando!
+            No hay promociones disponibles actualmente!{" "}
+            <a
+              className="text-pink-600 hover:underline"
+              href="https://www.instagram.com/sitiosports.ar/"
+              target="_blank"
+            >
+              Siguenos en nuestras redes para estar actualizado.
+            </a>
           </h1>
         </div>
       ) : (
@@ -200,7 +204,6 @@ const Pagination = ({
   const [itemStart, setItemStart] = useState(1);
   const [empty, setEmpty] = useState(false);
   const [localSearchTag, setLocalSearchTag] = useState("");
-console.log(items, "items");
 
   const endOffset = itemOffset + itemsPerPage;
   const currentItems = items;
@@ -274,10 +277,16 @@ console.log(items, "items");
           </h1>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 mdl:gap-4 lg:gap-10">
+        <div
+          className={`${
+            items.length === 0
+              ? "w-full flex justify-center"
+              : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 mdl:gap-4 lg:gap-10"
+          }`}
+        >
           {promotions ? (
             <ItemsPromotions
-             items={items}
+              items={items}
               currentItems={currentItems.promotion}
               selectedBrands={selectedBrands}
               selectedCategories={selectedCategories}
