@@ -77,16 +77,16 @@ const Cart = () => {
     // Separar productos en promociones y normales
     const promoItems = products.filter((item) => item.promotion);
     const normalItems = products.filter((item) => !item.promotion);
-  
+
     setPromotions(promoItems);
     setNormalProducts(normalItems);
-  
+
     // Calcular la suma de discountAmount de todas las promociones
     const totalDiscount = promoItems.reduce(
       (acc, item) => acc + parseFloat(item.discountAmount || 0),
       0
     );
-  
+
     // Guardar el total del descuento en una variable o estado
     setPromotionalDiscount(totalDiscount); // Asumiendo que tienes un estado para esto
   }, [products]);
@@ -212,12 +212,18 @@ const Cart = () => {
 
   // Sumar las cantidades de los productos normales
   if (normalProducts) {
-    numberOfProducts += normalProducts.reduce((acc, product) => acc + product.quantity, 0);
+    numberOfProducts += normalProducts.reduce(
+      (acc, product) => acc + product.quantity,
+      0
+    );
   }
-  
+
   // Sumar la cantidad de productos en las promociones
   if (promotions) {
-    numberOfProducts += promotions.reduce((acc, promotion) => acc + (promotion.products?.length || 0), 0);
+    numberOfProducts += promotions.reduce(
+      (acc, promotion) => acc + (promotion.products?.length || 0),
+      0
+    );
   }
   return (
     <div className="flex flex-col max-w-container mx-auto px-3 lg:px-32 relative">
