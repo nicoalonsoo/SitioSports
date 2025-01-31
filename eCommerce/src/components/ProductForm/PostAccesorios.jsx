@@ -27,6 +27,14 @@ const PostAccesorios = ({ id, handleSizes, variants, cat, sub_cat }) => {
     { size: "41-42", stock: 0, sold: 0 },
     { size: "43-44", stock: 0, sold: 0 },
   ];
+  const chanclasSizes = [
+    { size: "34/35", stock: 0, sold: 0 },
+    { size: "36/37", stock: 0, sold: 0 },
+    { size: "38/39", stock: 0, sold: 0 },
+    { size: "40/41", stock: 0, sold: 0 },
+    { size: "42/43", stock: 0, sold: 0 },
+    { size: "44/45", stock: 0, sold: 0 },
+  ];
 
   const getSizesBySubCategory = (sub_cat) => {
     switch (sub_cat) {
@@ -40,6 +48,8 @@ const PostAccesorios = ({ id, handleSizes, variants, cat, sub_cat }) => {
         return guantesSizes;
       case "Medias":
         return mediasSizes;
+      case "Chanclas":
+        return chanclasSizes;
       default:
         return [];
     }

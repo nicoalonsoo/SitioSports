@@ -22,7 +22,7 @@ const PromotionForm = () => {
   const categoryToSubcategories = {
     Botines: ["Futbol 5", "Futbol 11"],
     Camisetas: ["24/25", "Retro"],
-    Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo"],
+    Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo", "Chanclas"],
     Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto"],
     Zapatillas: ["Hombre", "Mujer"],
   };

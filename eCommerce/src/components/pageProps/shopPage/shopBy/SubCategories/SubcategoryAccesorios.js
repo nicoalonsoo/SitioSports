@@ -40,6 +40,10 @@ const SubcategoryAccesorios = () => {
       _id: 10020,
       title: "Termo",
     },
+    {
+      _id: 10021,
+      title: "Chanclas",
+    },
   ];
 
   const handleToggleSubcategory = (subcategory) => {
