@@ -64,7 +64,14 @@ const ProductForm = () => {
     { size: "9", stock: 0, sold: 0 },
     { size: "10", stock: 0, sold: 0 },
   ];
-
+  const chanclasSizes = [
+    { size: "34/35", stock: 0, sold: 0 },
+    { size: "36/37", stock: 0, sold: 0 },
+    { size: "38/39", stock: 0, sold: 0 },
+    { size: "40/41", stock: 0, sold: 0 },
+    { size: "42/43", stock: 0, sold: 0 },
+    { size: "44/45", stock: 0, sold: 0 },
+  ];
   const canillerasSizes = [{ size: "Canilleras", stock: 0, sold: 0 }];
 
   const termoSizes = [{ size: "Termo", stock: 0, sold: 0 }];
@@ -82,6 +89,8 @@ const ProductForm = () => {
           return termoSizes;
         case "Medias":
           return mediasSizes;
+          case "Chanclas":
+            return chanclasSizes;
         default:
           return [];
       }
@@ -118,7 +127,7 @@ const ProductForm = () => {
     Medias: ["Cortas", "Largas"],
     Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto"],
     Zapatillas: ["Hombre", "Mujer"],
-    Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo"],
+    Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo", "Chanclas"],
   };
 
   useEffect(() => {

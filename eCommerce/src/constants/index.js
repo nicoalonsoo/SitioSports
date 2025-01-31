@@ -183,6 +183,10 @@ export const allSubcategories = [
     _id: 10020,
     title: "Termo",
   },
+  {
+    _id: 10021,
+    title: "Chanclas",
+  },
 ];
 
 export const allBrands = [
@@ -284,6 +288,14 @@ export const guantesSizes = [
   { size: "8", stock: 0, sold: 0 },
   { size: "9", stock: 0, sold: 0 },
   { size: "10", stock: 0, sold: 0 },
+];
+export const chanclasSizes = [
+  { size: "34/35", stock: 0, sold: 0 },
+  { size: "36/37", stock: 0, sold: 0 },
+  { size: "38/39", stock: 0, sold: 0 },
+  { size: "40/41", stock: 0, sold: 0 },
+  { size: "42/43", stock: 0, sold: 0 },
+  { size: "44/45", stock: 0, sold: 0 },
 ];
 
 export const canillerasSizes = [{ size: "Canilleras", stock: 0, sold: 0 }];
