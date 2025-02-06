@@ -160,67 +160,67 @@ const Payment = () => {
 
 
   const handlePay = async () => {
-    // if (paymentMethod === "mp") {
-    //   try {
-    //     setProcessing(true);
-    //     const response = await axios.post(
-    //       "https://sitiosports-production.up.railway.app/create-order",
-    //       order
-    //     );
-    //     const preferenceId = response.data.id;
-    //     const redirectUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${preferenceId}`;
-    //     dispatch(resetCart());
-    //     window.location.href = redirectUrl;
-    //     setProcessing(false);
-    //   } catch (error) {
-    //     console.error("Error creating order:", error);
-    //     setProcessing(false);
-    //   }
-    // } else {
-    //   try {
-    //     setProcessing(true);
-    //     const postOrder = {
-    //       items: productInfo,
-    //       name: order.payerInfo.payerName,
-    //       email: order.payerInfo.email,
-    //       client_id: order.payerInfo.client_id,
-    //       phone: order.payerInfo.phone,
-    //       shipment: {
-    //         zipCode: order.payerInfo.zipCode,
-    //         state_name: order.payerInfo.state,
-    //         city_name: order.payerInfo.city,
-    //         street_name: order.payerInfo.street,
-    //         street_number: order.payerInfo.streetNumber,
-    //         floor: order.payerInfo.floor,
-    //         aclaration: order.payerInfo.aclaration,
-    //         rate: shipping,
-    //       },
-    //       order_type: "Transferencia Bancaria",
-    //       status: "Pago Pendiente",
-    //       status_detail: "Cliente debe realizar la transferencia",
-    //       transaction_amount: shipmentPlusTotal,
-    //       shipping_amount: shippmentCharge,
-    //       transaction_details: {
-    //         net_received_amount: shipmentPlusTotal,
-    //         total_paid_amount: totalAmt,
-    //       },
-    //       shipping_type: shipping,
-    //     };
-    //     const responsePost = await axios.post(
-    //       "https://sitiosports-production.up.railway.app/order",
-    //       postOrder
-    //     );
-    //     const order_number = responsePost.data.order_number;
-    //     navigate(
-    //       `/orden-transferencia-confirmada/${order_number}?monto=${shipmentPlusTotal}`
-    //     );
-    //     dispatch(resetCart());
-    //     setProcessing(false);
-    //   } catch (error) {
-    //     console.error("Error creating order:", error);
-    //     setProcessing(false);
-    //   }
-    // }
+    if (paymentMethod === "mp") {
+      try {
+        setProcessing(true);
+        const response = await axios.post(
+          "https://sitiosports-production.up.railway.app/create-order",
+          order
+        );
+        const preferenceId = response.data.id;
+        const redirectUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${preferenceId}`;
+        dispatch(resetCart());
+        window.location.href = redirectUrl;
+        setProcessing(false);
+      } catch (error) {
+        console.error("Error creating order:", error);
+        setProcessing(false);
+      }
+    } else {
+      try {
+        setProcessing(true);
+        const postOrder = {
+          items: productInfo,
+          name: order.payerInfo.payerName,
+          email: order.payerInfo.email,
+          client_id: order.payerInfo.client_id,
+          phone: order.payerInfo.phone,
+          shipment: {
+            zipCode: order.payerInfo.zipCode,
+            state_name: order.payerInfo.state,
+            city_name: order.payerInfo.city,
+            street_name: order.payerInfo.street,
+            street_number: order.payerInfo.streetNumber,
+            floor: order.payerInfo.floor,
+            aclaration: order.payerInfo.aclaration,
+            rate: shipping,
+          },
+          order_type: "Transferencia Bancaria",
+          status: "Pago Pendiente",
+          status_detail: "Cliente debe realizar la transferencia",
+          transaction_amount: shipmentPlusTotal,
+          shipping_amount: shippmentCharge,
+          transaction_details: {
+            net_received_amount: shipmentPlusTotal,
+            total_paid_amount: totalAmt,
+          },
+          shipping_type: shipping,
+        };
+        const responsePost = await axios.post(
+          "https://sitiosports-production.up.railway.app/order",
+          postOrder
+        );
+        const order_number = responsePost.data.order_number;
+        navigate(
+          `/orden-transferencia-confirmada/${order_number}?monto=${shipmentPlusTotal}`
+        );
+        dispatch(resetCart());
+        setProcessing(false);
+      } catch (error) {
+        console.error("Error creating order:", error);
+        setProcessing(false);
+      }
+    }
   };
 
 
