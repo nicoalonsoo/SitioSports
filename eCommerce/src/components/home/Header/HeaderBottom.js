@@ -17,14 +17,21 @@ const HeaderBottom = ({handleSearchBar}) => {
   const ref = useRef();
 
   useEffect(() => {
-    document.body.addEventListener("click", (e) => {
-      if (ref.current.contains(e.target)) {
+    const handleClick = (e) => {
+      if (ref.current && ref.current.contains(e.target)) {
         setShow(true);
       } else {
         setShow(false);
       }
-    });
-  }, [show, ref]);
+    };
+
+    document.body.addEventListener("click", handleClick);
+    
+    // Cleanup function
+    return () => {
+      document.body.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -57,7 +64,7 @@ const HeaderBottom = ({handleSearchBar}) => {
   }
   return (
     <Flex className={`flex flex-col lg:flex-row items-start lg:items-center justify-end ${showSearchBar ? "w-full" : "w-full"} lg:w-2/3 h-full lg:h-14`}>
-      <div className="relative w-full lg:w-auto h-[40px] text-base text-primeColor bg-white flex items-center gap-2 justify-between px-6 rounded-xl shadow-sm">
+      <div ref={ref} className="relative w-full lg:w-auto h-[40px] text-base text-primeColor bg-white flex items-center gap-2 justify-between px-6 rounded-xl shadow-sm">
         {showSearchBar ? (
           <>
             <button onClick={handleCloseSearchBar}>
