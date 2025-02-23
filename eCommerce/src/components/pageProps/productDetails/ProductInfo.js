@@ -161,6 +161,32 @@ const ProductInfo = ({
       title: "43-44",
     },
   ];
+  const chanclasSizes = [
+    {
+      _id: 9022,
+      title: "34/35",
+    },
+    {
+      _id: 9023,
+      title: "36/37",
+    },
+    {
+      _id: 9024,
+      title: "38/39",
+    },
+    {
+      _id: 9025,
+      title: "40/41",
+    },
+    {
+      _id: 9026,
+      title: "42/43",
+    },
+    {
+      _id: 9027,
+      title: "44/45",
+    },
+  ];
 
   const handleSize = (size) => {
     setSelectedSize(size);
@@ -290,9 +316,11 @@ const ProductInfo = ({
               ? sizesCamisetas
               : productInfo.cat === "Indumentaria"
               ? sizesCamisetas
-              : sizesMedias
+              : productInfo.sub_cat === "Medias"
+              ? sizesMedias
+              : chanclasSizes
           } 
-        />
+        /> 
         <SizeGuide cat={productInfo.cat} brand={productInfo.brand} />
 
         <div className="flex flex-col items-center gap-2">

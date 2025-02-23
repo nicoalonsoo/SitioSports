@@ -17,7 +17,6 @@ const Payment = () => {
   const navigate = useNavigate();
   const cartProducts = useSelector((state) => state.orebiReducer.cartProducts);
   const [products, setProducts] = useState([]);
-  const [resume, setResume] = useState(false);
   const [email, setEmail] = useState("");
   const [contactReady, setContactReady] = useState(false);
   const [addressReady, setAddressReady] = useState(false);
@@ -85,7 +84,6 @@ const Payment = () => {
 
   useEffect(() => {
     setProductInfo(location.state.item);
-    setResume(true);
     setShippmentCharge(location.state.shippingCharge);
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
@@ -97,7 +95,7 @@ const Payment = () => {
       value: productInfo.price, // Precio del producto
       currency: "ARS", // Moneda
     });
-  }, [location]);
+  }, [location, productInfo.price, productInfo.id, productInfo.productName]);
   useEffect(() => {
     let price = 0;
     if (productInfo !== "") {
@@ -651,7 +649,7 @@ const Payment = () => {
                       <img className="w-14" alt="card-icon" src={tarjeta} />
                     ))}
                     {otherPaymentMethods?.map((payment) => (
-                      <img src={payment} className="w-14" />
+                      <img alt="other payments" src={payment} className="w-14" />
                     ))}
                   </div>
                 ) : (

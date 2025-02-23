@@ -7,7 +7,7 @@ import { logoTransparent } from "../../../assets/images";
 import Image from "../../designLayouts/Image";
 import { navBarList } from "../../../constants";
 import Flex from "../../designLayouts/Flex";
-import { FaUser, FaCaretDown, FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   cleanFilters,
@@ -16,21 +16,17 @@ import {
 } from "../../../redux/orebiSlice";
 import DropdownBotines from "./DropdownBotines";
 import DropdownCamisetas from "./DropdownCamisetas";
-import DropdownMedias from "./DropdownMedias";
 import HeaderBottom from "./HeaderBottom";
 import { fetchCommissionsFromBackend } from "../../../utils/api";
 
 const Header = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.orebiReducer.cartProducts);
-  const categories = useSelector(
-    (state) => state.orebiReducer.checkedCategorys
-  );
+
 
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(true);
   const [sidenav, setSidenav] = useState(false);
-  const [showUser, setShowUser] = useState(false);
   const [showBotinesDiv, setShowBotinesDiv] = useState(false);
   const [showZapatillas, setShowZapatillas] = useState(false);
   const [showIndumentaria, setShowIndumentaria] = useState(false);
