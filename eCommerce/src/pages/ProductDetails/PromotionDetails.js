@@ -4,8 +4,15 @@ import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import PromotionInfo from "../../components/pageProps/productDetails/PromotionInfo";
 import BestSellers from "../../components/home/BestSellers/BestSellers";
 import CarruselDetail from "../../components/pageProps/productDetails/CarruselDetail";
-import { fetchPromotionBySlugFromBackend } from "../../utils/api";
-import { setPromotionById, cleanPromotionById } from "../../redux/orebiSlice";
+import {
+  fetchPromotionBySlugFromBackend,
+  fetchProductsFromBackend,
+} from "../../utils/api";
+import {
+  setPromotionById,
+  cleanPromotionById,
+  setBackendProducts,
+} from "../../redux/orebiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { spinner } from "../../assets/images";
 import ImageDetail from "../../components/pageProps/productDetails/ImageDetail";
@@ -29,6 +36,11 @@ const PromotionDetails = () => {
         const product = await fetchPromotionBySlugFromBackend(slug);
         dispatch(setPromotionById(product));
         setIsLoading(false); // Desactivar el loading cuando los datos se cargan
+        const allProducts = await fetchProductsFromBackend();
+        const activeProducts = allProducts.filter(
+          (product) => !product.disabled
+        );
+        dispatch(setBackendProducts(activeProducts));
       } catch (error) {
         console.error("Error fetching products:", error);
         setIsLoading(false); // Desactivar el loading incluso si hay un error
