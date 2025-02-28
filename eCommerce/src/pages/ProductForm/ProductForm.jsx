@@ -72,6 +72,7 @@ const ProductForm = () => {
     { size: "42/43", stock: 0, sold: 0 },
     { size: "44/45", stock: 0, sold: 0 },
   ];
+
   const canillerasSizes = [{ size: "Canilleras", stock: 0, sold: 0 }];
 
   const termoSizes = [{ size: "Termo", stock: 0, sold: 0 }];
