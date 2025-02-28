@@ -23,7 +23,7 @@ const PromotionForm = () => {
     Botines: ["Futbol 5", "Futbol 11"],
     Camisetas: ["24/25", "Retro"],
     Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo", "Chanclas"],
-    Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto"],
+    Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto", "Calzas"],
     Zapatillas: ["Hombre", "Mujer"],
   };
 
