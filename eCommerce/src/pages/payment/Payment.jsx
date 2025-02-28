@@ -10,9 +10,9 @@ import AddressForm from "../../components/PayerForm/AddressForm";
 import ContactForm from "../../components/PayerForm/ContactForm";
 import { tarjetas, otherPaymentMethods } from "../../constants/index";
 import ShippingOptions from "../../components/ShippingOptions/ShippingOptions";
-const API_URL = process.env.BACK_URL;
-const Payment = () => {
 
+const Payment = () => {
+  const API_URL = process.env.REACT_APP_BACK_URL;
   const [showDetails, setShowDetails] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
