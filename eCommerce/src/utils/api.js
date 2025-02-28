@@ -1,16 +1,18 @@
 import axios from "axios";
+const API_URL = process.env.BACK_URL;
 
 export const fetchProductsFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/products");
+    const response = await axios.get(`${API_URL}/products`);
     return response.data; 
   } catch (error) {
     throw error;
   }
 };
+
 export const fetchProductBySlugFromBackend = async (slug) => {
   try {
-    const response = await axios.get(`https://sitiosports-production.up.railway.app/products/${slug}`);
+    const response = await axios.get(`${API_URL}/products/${slug}`);
     return response.data; 
   } catch (error) {
     throw error;
@@ -19,7 +21,7 @@ export const fetchProductBySlugFromBackend = async (slug) => {
 
 export const fetchPromotionBySlugFromBackend = async (slug) => {
   try {
-    const response = await axios.get(`https://sitiosports-production.up.railway.app/promotion/${slug}`);
+    const response = await axios.get(`${API_URL}/promotion/${slug}`);
     return response.data; 
   } catch (error) {
     throw error;
@@ -28,23 +30,25 @@ export const fetchPromotionBySlugFromBackend = async (slug) => {
 
 export const fetchUsersFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/users");
+    const response = await axios.get(`${API_URL}/users`);
     return response.data; 
   } catch (error) {
     throw error;
   }
 };
+
 export const fetchDiscountsFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/discounts");
+    const response = await axios.get(`${API_URL}/discounts`);
     return response.data; 
   } catch (error) {
     throw error;
   }
 };
+
 export const fetchPromotionsFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/promotion");
+    const response = await axios.get(`${API_URL}/promotion`);
     return response.data; 
   } catch (error) {
     throw error;
@@ -53,7 +57,7 @@ export const fetchPromotionsFromBackend = async () => {
 
 export const fetchOrdersFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/orders");
+    const response = await axios.get(`${API_URL}/orders`);
     return response.data; 
   } catch (error) {
     throw error;
@@ -62,18 +66,12 @@ export const fetchOrdersFromBackend = async () => {
 
 export const fetchCommissionsFromBackend = async () => {
   try {
-    const response = await axios.get("https://sitiosports-production.up.railway.app/commissions");
+    const response = await axios.get(`${API_URL}/commissions`);
     return response.data; 
   } catch (error) {
     throw error;
   }
 };
-
-//https://sitiosports-production.up.railway.app/
-
-//https://sitiosports-production.up.railway.app/
-
-const API_URL = 'https://sitiosports-production.up.railway.app'; // Cambia esto a tu URL del backend
 
 export const login = async (username, password) => {
   try {
@@ -86,7 +84,6 @@ export const login = async (username, password) => {
     throw new Error('Invalid credentials');
   }
 };
-
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('userToken');
