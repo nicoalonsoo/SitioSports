@@ -72,6 +72,7 @@ const ProductForm = () => {
     { size: "42/43", stock: 0, sold: 0 },
     { size: "44/45", stock: 0, sold: 0 },
   ];
+
   const canillerasSizes = [{ size: "Canilleras", stock: 0, sold: 0 }];
 
   const termoSizes = [{ size: "Termo", stock: 0, sold: 0 }];
@@ -125,7 +126,7 @@ const ProductForm = () => {
     Botines: ["Futbol 5", "Futbol 11"],
     Camisetas: ["24/25", "Retro"],
     Medias: ["Cortas", "Largas"],
-    Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto"],
+    Indumentaria: ["Campera", "Buzo", "Chaleco", "Conjunto", "Calzas"],
     Zapatillas: ["Hombre", "Mujer"],
     Accesorios: ["Mochila", "Medias", "Guantes", "Canilleras", "Termo", "Chanclas"],
   };

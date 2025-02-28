@@ -211,6 +211,10 @@ export const allSubcategories = [
     _id: 10021,
     title: "Chanclas",
   },
+  {
+    _id: 10022,
+    title: "Calzas",
+  },
 ];
 
 export const allBrands = [

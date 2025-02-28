@@ -36,6 +36,10 @@ const SubcategoryIndumentaria = () => {
       _id: 10015,
       title: "Conjunto",
     },
+    {
+      _id: 10022,
+      title: "Calzas",
+    },
   ];
 
   const handleToggleSubcategory = (subcategory) => {

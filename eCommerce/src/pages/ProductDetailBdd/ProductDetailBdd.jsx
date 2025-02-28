@@ -12,6 +12,7 @@ import {
   guantesSizes,
   canillerasSizes,
   termoSizes,
+  chanclasSizes
 } from "../../constants";
 import StockBysizes from "../../components/ProductsTable/StockBySizes";
 import formatPrice from "../../utils/formatPrice";
@@ -149,6 +150,8 @@ const ProductDetailBdd = () => {
         ? camisetasSizes
         : product.cat === "Medias"
         ? mediasSizes
+        :product.sub_cat = "Chanlcas"
+        ? chanclasSizes
         : product.cat === "Zapatillas"
         ? product.tags.includes("Hombre")
           ? botinesSizes

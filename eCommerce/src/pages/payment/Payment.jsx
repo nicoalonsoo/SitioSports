@@ -10,6 +10,7 @@ import AddressForm from "../../components/PayerForm/AddressForm";
 import ContactForm from "../../components/PayerForm/ContactForm";
 import { tarjetas, otherPaymentMethods } from "../../constants/index";
 import ShippingOptions from "../../components/ShippingOptions/ShippingOptions";
+const API_URL = process.env.BACK_URL;
 const Payment = () => {
 
   const [showDetails, setShowDetails] = useState(false);
@@ -162,7 +163,7 @@ const Payment = () => {
       try {
         setProcessing(true);
         const response = await axios.post(
-          "https://sitiosports-production.up.railway.app/create-order",
+          `${API_URL}/create-order`,
           order
         );
         const preferenceId = response.data.id;
@@ -205,7 +206,7 @@ const Payment = () => {
           shipping_type: shipping,
         };
         const responsePost = await axios.post(
-          "https://sitiosports-production.up.railway.app/order",
+         `${API_URL}/order`,
           postOrder
         );
         const order_number = responsePost.data.order_number;
@@ -290,7 +291,7 @@ const Payment = () => {
       };
 
       const response = await axios.put(
-        `https://sitiosports-production.up.railway.app/discounts/${couponCode}`, // Usamos PUT y pasamos el code como parámetro
+        `${API_URL}/discounts/${couponCode}`, // Usamos PUT y pasamos el code como parámetro
         { usageRecord } // Mandamos el registro de uso en el body
       );
 
