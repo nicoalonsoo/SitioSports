@@ -11,6 +11,7 @@ import {
   increaseQuantity,
   drecreaseQuantity,
   updatePrice,
+  updatePromotionDetails,
   updateDisabledPromotion,
   setBackendProducts,
   setBackendPromotions,
@@ -164,6 +165,97 @@ const Cart = () => {
       }
     });
   }, [products, allPromotions, dispatch]);
+
+
+// Add this useEffect after your existing product price update useEffect
+useEffect(() => {
+  // Verificar actualizaciones de precios en promociones
+  promotions.forEach((promoItem) => {
+    const foundPromotion = allPromotions.find(
+      (promotion) => promotion.id === promoItem.id
+    );
+
+    if (foundPromotion) {
+      // Variables para controlar las actualizaciones
+      let shouldUpdatePromotion = false;
+      let newPromotionPrice = 0;
+      let updatedProducts = [...promoItem.products];
+      
+      // Verificar cada producto dentro de la promoción
+      for (let i = 0; i < updatedProducts.length; i++) {
+        const promoProduct = updatedProducts[i];
+        
+        // Buscar el producto en el catálogo
+        const catalogProduct = allProducts.find(
+          (product) => product.id === promoProduct.id
+        );
+        
+        if (catalogProduct) {
+          // Si el producto tiene precio mayor a 0 y ha cambiado
+          if (parseFloat(promoProduct.price) > 0 && promoProduct.price !== catalogProduct.price) {
+            // Actualizar el producto en la lista de productos actualizada
+            updatedProducts[i] = {
+              ...promoProduct,
+              price: catalogProduct.price
+            };
+            
+            shouldUpdatePromotion = true;
+            
+            toast.info(
+              `El precio de ${promoProduct.name} en la promoción "${promoItem.title}" ha cambiado a $${catalogProduct.price}.`,
+              { autoClose: 10000 }
+            );
+          }
+          
+          // Sumar al precio total (usando el precio actualizado)
+          newPromotionPrice += parseFloat(updatedProducts[i].price);
+        }
+      }
+      
+      // Si hubo cambios, actualizar la promoción
+      if (shouldUpdatePromotion) {
+        // Formatear el precio con 2 decimales
+        const formattedPrice = newPromotionPrice.toFixed(2);
+        
+        // Calcular el nuevo discount amount basado en los productos gratuitos
+        let newDiscountAmount = 0;
+        if (promoItem.type === "Regalo") {
+          const freeProductsTotal = updatedProducts
+            .filter(product => parseFloat(product.price) === 0)
+            .reduce((sum, product) => {
+              // Buscar el precio actual del producto en el catálogo
+              const catalogProduct = allProducts.find(p => p.id === product.id);
+              return sum + parseFloat(catalogProduct?.price || "0");
+            }, 0);
+            
+          newDiscountAmount = freeProductsTotal.toFixed(2);
+        } else {
+          // Para otros tipos de promociones, mantener la lógica existente o ajustar según necesidades
+          newDiscountAmount = promoItem.discountAmount;
+        }
+        
+        // Usar la función updatePrice existente para actualizar el precio principal
+        dispatch(updatePrice({ id: promoItem.id, newPrice: formattedPrice }));
+        
+        // Necesitaremos una nueva acción para actualizar los productos y el discountAmount
+        dispatch(
+          updatePromotionDetails({
+            id: promoItem.id,
+            discountAmount: newDiscountAmount,
+            products: updatedProducts
+          })
+        );
+        
+        toast.info(
+          `El precio total de la promoción "${promoItem.title}" ha sido actualizado a $${formattedPrice}.`,
+          { autoClose: 10000 }
+        );
+      }
+    }
+  });
+}, [promotions, allProducts, allPromotions, dispatch]);
+
+
 
   const handlePaymentGateway = () => {
     const items = [];
