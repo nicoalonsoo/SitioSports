@@ -202,6 +202,18 @@ export const orebiSlice = createSlice({
         promotionInCart.disabled = newState; // Actualizamos el estado
       }
     },
+    updatePromotionDetails: (state, action) => {
+      const { id, discountAmount, products } = action.payload;
+      const promotionIndex = state.cartProducts.findIndex((item) => item.id === id);
+      
+      if (promotionIndex !== -1) {
+        // Actualizar el discountAmount
+        state.cartProducts[promotionIndex].discountAmount = discountAmount;
+        
+        // Actualizar los productos
+        state.cartProducts[promotionIndex].products = products;
+      }
+    }
   },
 });
 
@@ -231,6 +243,7 @@ export const {
   setBackendPromotions,
   setPromotionById,
   cleanPromotionById,
-  updateDisabledPromotion
+  updateDisabledPromotion,
+  updatePromotionDetails
 } = orebiSlice.actions;
 export default orebiSlice.reducer;
