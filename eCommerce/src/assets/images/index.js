@@ -49,6 +49,7 @@ import shipping from "./shipping.svg";
 import banner1 from "./banner/banner1.webp";
 import banner2 from "./banner/banner_prueba.webp";
 import banner3 from "./banner/banner_prueba2.webp";
+import banner4 from "./banner/banner_calzas.webp";
 
 import offer1 from "./offer1.webp";
 import offer2 from "./offer2.webp";
@@ -105,6 +106,7 @@ export {
   banner1,
   banner2,
   banner3,
+  banner4,
   offer1,
   offer2,
   video_arg,
