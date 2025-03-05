@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import CustomSlide from "./CustomSlide";
-import { banner1, banner2, banner3 } from "../../assets/images";
+import { banner1, banner2, banner3, banner4} from "../../assets/images";
 
 import { cleanFilters, toggleBrand, toggleCategory } from "../../redux/orebiSlice";
 import { useDispatch } from "react-redux";
 import { allCategories, allBrands } from "../../constants";
-import { cybermonday, cybermonday2, cybermonday3 } from "../../assets/images";
 
 const Banner = () => {
   const dispatch = useDispatch(); 
@@ -24,6 +23,19 @@ const Banner = () => {
   };
 
   const slides = [
+    {
+      imgSrc:
+        banner4,
+      text: "Quality Printing Solutions",
+      Subtext:
+        "Discover our wide range of printers and consumables designed for professional printing needs.",
+      buttonLink: "/promocion/calzas-nike-pro-2x1",
+      buttonText: "Comprar Ahora",
+      buttonClick: () => {
+        dispatch(cleanFilters());
+       
+      },
+    },
     {
       imgSrc:
         banner2,
