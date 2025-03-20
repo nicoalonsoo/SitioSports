@@ -92,6 +92,31 @@ const Cart = () => {
     setPromotionalDiscount(totalDiscount); // Asumiendo que tienes un estado para esto
   }, [products]);
 
+  // Nuevo useEffect para verificar dimensiones vacías
+  useEffect(() => {
+    // Verificar dimensiones en productos normales
+    products.forEach((cartItem) => {
+      if (!cartItem.promotion) {
+        // Verificar si dimensions existe y no es un objeto vacío
+        const hasDimensions = cartItem.dimensions && 
+          typeof cartItem.dimensions === 'object' && 
+          Object.keys(cartItem.dimensions).length > 0 &&
+          'weight' in cartItem.dimensions &&
+          'height' in cartItem.dimensions &&
+          'width' in cartItem.dimensions &&
+          'length' in cartItem.dimensions;
+
+        if (!hasDimensions) {
+          dispatch(deleteItem({ id: cartItem.id, size: cartItem.size }));
+          toast.error(
+            `${cartItem.name} fue quitado del carrito porque no tiene información de dimensiones.`,
+            { autoClose: 10000 }
+          );
+        }
+      }
+    });
+  }, [products, dispatch]);
+
   useEffect(() => {
     // Verificar actualizaciones de precios y stock
     products.forEach((cartItem) => {
@@ -166,96 +191,92 @@ const Cart = () => {
     });
   }, [products, allPromotions, dispatch]);
 
+  useEffect(() => {
+    // Verificar actualizaciones de precios en promociones
+    promotions.forEach((promoItem) => {
+      const foundPromotion = allPromotions.find(
+        (promotion) => promotion.id === promoItem.id
+      );
 
-// Add this useEffect after your existing product price update useEffect
-useEffect(() => {
-  // Verificar actualizaciones de precios en promociones
-  promotions.forEach((promoItem) => {
-    const foundPromotion = allPromotions.find(
-      (promotion) => promotion.id === promoItem.id
-    );
-
-    if (foundPromotion) {
-      // Variables para controlar las actualizaciones
-      let shouldUpdatePromotion = false;
-      let newPromotionPrice = 0;
-      let updatedProducts = [...promoItem.products];
-      
-      // Verificar cada producto dentro de la promoción
-      for (let i = 0; i < updatedProducts.length; i++) {
-        const promoProduct = updatedProducts[i];
+      if (foundPromotion) {
+        // Variables para controlar las actualizaciones
+        let shouldUpdatePromotion = false;
+        let newPromotionPrice = 0;
+        let updatedProducts = [...promoItem.products];
         
-        // Buscar el producto en el catálogo
-        const catalogProduct = allProducts.find(
-          (product) => product.id === promoProduct.id
-        );
+        // Verificar cada producto dentro de la promoción
+        for (let i = 0; i < updatedProducts.length; i++) {
+          const promoProduct = updatedProducts[i];
+          
+          // Buscar el producto en el catálogo
+          const catalogProduct = allProducts.find(
+            (product) => product.id === promoProduct.id
+          );
+          
+          if (catalogProduct) {
+            // Si el producto tiene precio mayor a 0 y ha cambiado
+            if (parseFloat(promoProduct.price) > 0 && promoProduct.price !== catalogProduct.price) {
+              // Actualizar el producto en la lista de productos actualizada
+              updatedProducts[i] = {
+                ...promoProduct,
+                price: catalogProduct.price
+              };
+              
+              shouldUpdatePromotion = true;
+              
+              toast.info(
+                `El precio de ${promoProduct.name} en la promoción "${promoItem.title}" ha cambiado a $${catalogProduct.price}.`,
+                { autoClose: 10000 }
+              );
+            }
+            
+            // Sumar al precio total (usando el precio actualizado)
+            newPromotionPrice += parseFloat(updatedProducts[i].price);
+          }
+        }
         
-        if (catalogProduct) {
-          // Si el producto tiene precio mayor a 0 y ha cambiado
-          if (parseFloat(promoProduct.price) > 0 && promoProduct.price !== catalogProduct.price) {
-            // Actualizar el producto en la lista de productos actualizada
-            updatedProducts[i] = {
-              ...promoProduct,
-              price: catalogProduct.price
-            };
-            
-            shouldUpdatePromotion = true;
-            
-            toast.info(
-              `El precio de ${promoProduct.name} en la promoción "${promoItem.title}" ha cambiado a $${catalogProduct.price}.`,
-              { autoClose: 10000 }
-            );
+        // Si hubo cambios, actualizar la promoción
+        if (shouldUpdatePromotion) {
+          // Formatear el precio con 2 decimales
+          const formattedPrice = newPromotionPrice.toFixed(2);
+          
+          // Calcular el nuevo discount amount basado en los productos gratuitos
+          let newDiscountAmount = 0;
+          if (promoItem.type === "Regalo") {
+            const freeProductsTotal = updatedProducts
+              .filter(product => parseFloat(product.price) === 0)
+              .reduce((sum, product) => {
+                // Buscar el precio actual del producto en el catálogo
+                const catalogProduct = allProducts.find(p => p.id === product.id);
+                return sum + parseFloat(catalogProduct?.price || "0");
+              }, 0);
+              
+            newDiscountAmount = freeProductsTotal.toFixed(2);
+          } else {
+            // Para otros tipos de promociones, mantener la lógica existente o ajustar según necesidades
+            newDiscountAmount = promoItem.discountAmount;
           }
           
-          // Sumar al precio total (usando el precio actualizado)
-          newPromotionPrice += parseFloat(updatedProducts[i].price);
+          // Usar la función updatePrice existente para actualizar el precio principal
+          dispatch(updatePrice({ id: promoItem.id, newPrice: formattedPrice }));
+          
+          // Necesitaremos una nueva acción para actualizar los productos y el discountAmount
+          dispatch(
+            updatePromotionDetails({
+              id: promoItem.id,
+              discountAmount: newDiscountAmount,
+              products: updatedProducts
+            })
+          );
+          
+          toast.info(
+            `El precio total de la promoción "${promoItem.title}" ha sido actualizado a $${formattedPrice}.`,
+            { autoClose: 10000 }
+          );
         }
       }
-      
-      // Si hubo cambios, actualizar la promoción
-      if (shouldUpdatePromotion) {
-        // Formatear el precio con 2 decimales
-        const formattedPrice = newPromotionPrice.toFixed(2);
-        
-        // Calcular el nuevo discount amount basado en los productos gratuitos
-        let newDiscountAmount = 0;
-        if (promoItem.type === "Regalo") {
-          const freeProductsTotal = updatedProducts
-            .filter(product => parseFloat(product.price) === 0)
-            .reduce((sum, product) => {
-              // Buscar el precio actual del producto en el catálogo
-              const catalogProduct = allProducts.find(p => p.id === product.id);
-              return sum + parseFloat(catalogProduct?.price || "0");
-            }, 0);
-            
-          newDiscountAmount = freeProductsTotal.toFixed(2);
-        } else {
-          // Para otros tipos de promociones, mantener la lógica existente o ajustar según necesidades
-          newDiscountAmount = promoItem.discountAmount;
-        }
-        
-        // Usar la función updatePrice existente para actualizar el precio principal
-        dispatch(updatePrice({ id: promoItem.id, newPrice: formattedPrice }));
-        
-        // Necesitaremos una nueva acción para actualizar los productos y el discountAmount
-        dispatch(
-          updatePromotionDetails({
-            id: promoItem.id,
-            discountAmount: newDiscountAmount,
-            products: updatedProducts
-          })
-        );
-        
-        toast.info(
-          `El precio total de la promoción "${promoItem.title}" ha sido actualizado a $${formattedPrice}.`,
-          { autoClose: 10000 }
-        );
-      }
-    }
-  });
-}, [promotions, allProducts, allPromotions, dispatch]);
-
-
+    });
+  }, [promotions, allProducts, allPromotions, dispatch]);
 
   const handlePaymentGateway = () => {
     const items = [];
@@ -276,18 +297,29 @@ useEffect(() => {
           });
         });
       } else {
-        // Si es un producto normal, agregarlo directamente al array de items
-        items.push({
-          id: product.id,
-          name: product.name,
-          quantity: product.quantity,
-          size: product.size,
-          image: product.image,
-          price: product.price,
-          color: product.color || null,
-          variant: product.variant || null, // Validar que exista la propiedad
-          dimensions: product.dimensions || null, // Opcional, si es requerido
-        });
+        // Verificar si dimensions existe y es válido antes de agregar al array de items
+        const hasDimensions = product.dimensions && 
+          typeof product.dimensions === 'object' && 
+          Object.keys(product.dimensions).length > 0 &&
+          'weight' in product.dimensions &&
+          'height' in product.dimensions &&
+          'width' in product.dimensions &&
+          'length' in product.dimensions;
+
+        if (hasDimensions) {
+          // Si es un producto normal, agregarlo directamente al array de items
+          items.push({
+            id: product.id,
+            name: product.name,
+            quantity: product.quantity,
+            size: product.size,
+            image: product.image,
+            price: product.price,
+            color: product.color || null,
+            variant: product.variant || null,
+            dimensions: product.dimensions,
+          });
+        }
       }
     });
 
