@@ -28,6 +28,7 @@ const ShippingOptions = ({
       handleCalculateRate(savedCp);
     }
   }, []);
+console.log(products);
 
   useEffect(() => {
     const province = provinces.find((prov) => prov.name === state);
