@@ -80,21 +80,26 @@ const totalDimensions = cartProducts.reduce(
   }, [cartProducts, detailPrice]);
 
   const getToken = async () => {
-    const storedToken = JSON.parse(localStorage.getItem("correoToken"));
-    const now = new Date();
-
-    if (storedToken && new Date(storedToken.expire) > now) {
-      return storedToken.token;
-    } else {
+    try {
+      const storedToken = JSON.parse(localStorage.getItem("correoToken"));
+      const now = new Date();
       
-      const newToken = await handleAuthToken();
-      const newExpireDate = new Date();
-      newExpireDate.setSeconds(newExpireDate.getSeconds() + 3600); // Ajusta el tiempo según el `expire` que recibes
-      localStorage.setItem(
-        "correoToken",
-        JSON.stringify({ token: newToken, expire: newExpireDate.toISOString() })
-      );
-      return newToken;
+      // Add a buffer time (e.g., 5 minutes) to prevent edge cases
+      if (storedToken && new Date(storedToken.expire) > new Date(now.getTime() + 5*60*1000)) {
+        return storedToken.token;
+      } else {
+        const newToken = await handleAuthToken();
+        const newExpireDate = new Date();
+        newExpireDate.setSeconds(newExpireDate.getSeconds() + 3500); // 5 min buffer
+        localStorage.setItem(
+          "correoToken",
+          JSON.stringify({ token: newToken, expire: newExpireDate.toISOString() })
+        );
+        return newToken;
+      }
+    } catch (error) {
+      console.error("Error getting token:", error);
+      throw new Error("No se pudo obtener autorización para el servicio de envío");
     }
   };
 
