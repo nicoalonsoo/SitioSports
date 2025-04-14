@@ -255,8 +255,7 @@ const ProductInfo = ({
     setSelectedVariant(variant);
   };
 
-  console.log(productInfo);
-  
+  const transferPrice = productInfo.price ? productInfo.price * 0.75 : 0;
   return (
     <>
       <div className="flex flex-col items-start gap-4 lg:w-[40%]">
@@ -264,21 +263,29 @@ const ProductInfo = ({
           <span className="text-[#fc148c] font-semibold">Fútbol</span>
           <h1 className="text-3xl font-normal">{productInfo.productName}</h1>
           {productInfo.compare_price && parseFloat(productInfo.compare_price) > 0 ? (
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-x-4">
               <p className="text-3xl font-extrabold text-gray-700">
                 ${formatPrice(productInfo.price)}
               </p>
               <h6 className="text-xl line-through font-normal text-gray-700">
                 ${formatPrice(productInfo.compare_price)}
               </h6>
+              <p className="text-xl text-pink-700">
+               Pagando Con transferencia: ${formatPrice(transferPrice)}
+              </p>
             </div>
           ) : (
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col items-start justify-center gap-x-4">
               <p className="text-3xl font-extrabold text-gray-700">
                 ${formatPrice(productInfo.price)}
               </p>
+              <p className="text-xl text-pink-700">
+               Pagando Con transferencia: ${formatPrice(transferPrice)}
+              </p>
             </div>
+            
           )}
+          
         </div>
         <p className="text-gray-700">
           {productInfo.description ? productInfo.description : ""}
