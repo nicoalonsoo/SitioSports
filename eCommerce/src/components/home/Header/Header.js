@@ -16,6 +16,7 @@ import {
 } from "../../../redux/orebiSlice";
 import DropdownBotines from "./DropdownBotines";
 import DropdownCamisetas from "./DropdownCamisetas";
+import DropdownIndumentaria from "./DropdownIndumentaria";
 import HeaderBottom from "./HeaderBottom";
 import { fetchCommissionsFromBackend } from "../../../utils/api";
 
@@ -232,7 +233,7 @@ const Header = () => {
                       showIndumentaria ? "flex" : "hidden"
                     }`}
                   >
-                    {/* <DropdownMedias /> */}
+                     <DropdownIndumentaria /> 
                   </div>
                 </div>
 
