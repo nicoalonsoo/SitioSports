@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import Product from "../Products/Product";
-import SampleNextArrow from "./SampleNextArrow";
-import SamplePrevArrow from "./SamplePrevArrow";
 import { useSelector } from "react-redux";
 const NewArrivals = () => {
   const products = useSelector((state) => state.orebiReducer.products);
@@ -59,13 +57,13 @@ const NewArrivals = () => {
     ],
   };
   return (
-    <div className="w-full pb-6 lg:pb-4 lg:pb-16 space-y-10 py-8">
+    <div className="w-full pb-6 lg:pb-4 lg:pb-16 space-y-10 py-8 pb-4 lg:pb-0">
       <h1 className="text-left text-2xl lg:text-4xl font-normal ">
         Ofertas Pre-temporada
       </h1>
       <Slider {...settings}>
         {newArrivalsProducts.map((product) => (
-          <div key={product.id} className="px-2">
+          <div key={product.id} className="px-2 pb-4 lg:pb-0">
             <Product
               _id={product.id}
               img={product.variants[0].imgUrl[0]}
