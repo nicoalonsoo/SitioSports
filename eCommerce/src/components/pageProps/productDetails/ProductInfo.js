@@ -255,7 +255,7 @@ const ProductInfo = ({
     setSelectedVariant(variant);
   };
 
-  const transferPrice = productInfo.price ? productInfo.price * 0.75 : 0;
+  const transferPrice = productInfo.price ? productInfo.price * 0.85 : 0;
   return (
     <>
       <div className="flex flex-col items-start gap-4 lg:w-[40%]">

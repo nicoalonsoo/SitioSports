@@ -46,7 +46,7 @@ const Product = (props) => {
 
   // Convertir el porcentaje de descuento a cadena si es mayor que 0
   const discountText = discountPercentage > 0 ? `${discountPercentage}%` : "";
-  const transferPrice = props.price ? props.price * 0.75 : 0;
+  const transferPrice = props.price ? props.price * 0.85 : 0;
   return (
     <div className="w-full relative group">
       <div className="max-w-80  relative overflow-y-hidden cursor-pointer">
